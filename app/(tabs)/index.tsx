@@ -4,6 +4,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
 import { styles } from "./HomePage.style";
+import i18n from "../../constants/i18n";
 
 export default function App() {
   const router = useRouter(); // Utilise le hook useRouter
@@ -21,17 +22,15 @@ export default function App() {
           </View>
 
           {/* Texte principal */}
-          <Text style={styles.title}>Find the sound, wherever it is</Text>
-          <Text style={styles.subtitle}>
-            Stay connected, even in case of loss
-          </Text>
+          <Text style={styles.title}>{i18n.t("homeTitle")}</Text>
+          <Text style={styles.subtitle}>{i18n.t("homeSubtitle")}</Text>
 
           {/* Bouton principal */}
           <TouchableOpacity
             style={styles.button}
             onPress={() => router.push("/GeolocationPage")}
           >
-            <Text style={styles.buttonText}>Find Your Aids</Text>
+            <Text style={styles.buttonText}>{i18n.t("findYourAids")}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

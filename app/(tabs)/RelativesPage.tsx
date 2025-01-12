@@ -9,6 +9,7 @@ import {
 } from "react-native";
 
 import { styles } from "./RelativesPage.style";
+import i18n from "../../constants/i18n";
 
 export default function RelativesPage() {
   const [relatives, setRelatives] = useState([]); // Liste des contacts
@@ -27,10 +28,7 @@ export default function RelativesPage() {
 
   const handleAddRelative = () => {
     if (relatives.length >= 10) {
-      Alert.alert(
-        "Error",
-        "You cannot add more than 10 contacts. Please, delete the existing ones."
-      );
+      Alert.alert(i18n.t("error"), i18n.t("limitRelatives"));
       return;
     }
     setIsAdding(true);
@@ -51,17 +49,17 @@ export default function RelativesPage() {
       !currentRelative.email ||
       !currentRelative.phone
     ) {
-      Alert.alert("Error", "All fields are required.");
+      Alert.alert(i18n.t("error"), i18n.t("allFieldsRequired"));
       return;
     }
 
     if (!validateEmail(currentRelative.email)) {
-      Alert.alert("Error", "Invalid email address.");
+      Alert.alert(i18n.t("error"), i18n.t("invalidEmail"));
       return;
     }
 
     if (!validatePhoneNumber(currentRelative.phone)) {
-      Alert.alert("Error", "Phone number must contain only digits.");
+      Alert.alert(i18n.t("error"), i18n.t("invalidPhone"));
       return;
     }
 
@@ -106,17 +104,19 @@ export default function RelativesPage() {
       {isAdding ? (
         <View style={styles.addContainer}>
           <Text style={styles.title}>
-            {currentRelative.id ? "Edit Relative" : "Add a Relative"}
+            {currentRelative.id
+              ? i18n.t("editRelative")
+              : i18n.t("addRelative")}
           </Text>
           <Text style={styles.subtitle}>
             {currentRelative.id
-              ? "Modify information of your relative"
-              : "Configure information of your relatives to alert in case of loss"}
+              ? i18n.t("editRelativeSubtitle")
+              : i18n.t("addRelativeSubtitle")}
           </Text>
 
           <TextInput
             style={styles.input}
-            placeholder="Firstname"
+            placeholder={i18n.t("firstname")}
             value={currentRelative.firstname}
             onChangeText={(text) =>
               setCurrentRelative({ ...currentRelative, firstname: text })
@@ -125,7 +125,7 @@ export default function RelativesPage() {
           />
           <TextInput
             style={styles.input}
-            placeholder="Lastname"
+            placeholder={i18n.t("lastname")}
             value={currentRelative.lastname}
             onChangeText={(text) =>
               setCurrentRelative({ ...currentRelative, lastname: text })
@@ -134,7 +134,7 @@ export default function RelativesPage() {
           />
           <TextInput
             style={styles.input}
-            placeholder="Alias"
+            placeholder={i18n.t("alias")}
             value={currentRelative.alias}
             onChangeText={(text) =>
               setCurrentRelative({ ...currentRelative, alias: text })
@@ -143,7 +143,7 @@ export default function RelativesPage() {
           />
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder={i18n.t("email")}
             value={currentRelative.email}
             onChangeText={(text) =>
               setCurrentRelative({ ...currentRelative, email: text })
@@ -153,7 +153,7 @@ export default function RelativesPage() {
           />
           <TextInput
             style={styles.input}
-            placeholder="Phone N°"
+            placeholder={i18n.t("phone")}
             value={currentRelative.phone}
             onChangeText={(text) =>
               setCurrentRelative({
@@ -170,7 +170,7 @@ export default function RelativesPage() {
             onPress={handleSaveRelative}
           >
             <Text style={styles.actionText}>
-              {currentRelative.id ? "Update" : "Save"}
+              {currentRelative.id ? i18n.t("update") : i18n.t("save")}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -180,25 +180,25 @@ export default function RelativesPage() {
               setCurrentRelative(null);
             }}
           >
-            <Text style={styles.actionText}>Cancel</Text>
+            <Text style={styles.actionText}>{i18n.t("cancel")}</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.listContainer}>
-          <Text style={styles.title}>Contacts To Alert</Text>
-          <Text style={styles.subtitle}>
-            Relatives will receive an alert in case of loss of your hearing aids
-          </Text>
+          <Text style={styles.title}>{i18n.t("relativesPageTitle")}</Text>
+          <Text style={styles.subtitle}>{i18n.t("relativesPageSubtitle")}</Text>
 
           <TouchableOpacity
             style={styles.addButton}
             onPress={handleAddRelative}
           >
-            <Text style={styles.addButtonText}>Add a Relative</Text>
+            <Text style={styles.addButtonText}>
+              {i18n.t("addRelativeButton")}
+            </Text>
           </TouchableOpacity>
 
           {relatives.length > 0 && (
-            <Text style={styles.listSubtitle}>List of Relatives</Text>
+            <Text style={styles.listSubtitle}>{i18n.t("listOfRelatives")}</Text>
           )}
 
           <FlatList
@@ -222,7 +222,7 @@ export default function RelativesPage() {
                     style={[styles.actionButton, styles.deleteButton]}
                     onPress={() => handleDeleteRelative(item.id)}
                   >
-                    <Text style={styles.actionText}>Delete</Text>
+                    <Text style={styles.actionText}>{i18n.t("delete")}</Text>
                   </TouchableOpacity>
                 </View>
               </View>

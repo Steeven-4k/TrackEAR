@@ -9,6 +9,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from "../constants/i18n";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 
@@ -20,6 +22,17 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+
+  // Load the saved language preference
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const savedLanguage = await AsyncStorage.getItem("selectedLanguage");
+      if (savedLanguage) {
+        i18n.locale = savedLanguage; // Update i18n locale
+      }
+    };
+    loadLanguage();
+  }, []);
 
   useEffect(() => {
     if (loaded) {
@@ -40,7 +53,7 @@ export default function RootLayout() {
         {/* Page Settings */}
         <Stack.Screen
           name="SettingsPage"
-          options={{ title: "Settings", headerShown: true }}
+          options={{ title: "Settings", headerShown: false }}
         />
         {/* Page Not Found */}
         <Stack.Screen name="+not-found" />
