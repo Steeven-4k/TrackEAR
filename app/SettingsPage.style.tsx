@@ -1,6 +1,10 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FADBD8",
+  },
   container: {
     flex: 1,
     backgroundColor: "#FADBD8",
@@ -22,10 +26,29 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
+  settingRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  label: {
+    fontSize: 16,
+    color: "#333",
+  },
   sectionTitleRow: {
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 10,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 20,
+    color: "#555",
+    marginRight: 5,
   },
   hintButton: {
     backgroundColor: "#85C1E9",
@@ -40,33 +63,36 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
-  settingRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+  languageSelector: {
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: "#FFF",
+    marginVertical: 10,
   },
-  label: {
+  languageText: {
     fontSize: 16,
     color: "#333",
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 20,
-    color: "#555",
-    marginRight: 5,
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
-  pickerContainer: {
+  modalSafeArea: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  languageOption: {
+    padding: 20,
     backgroundColor: "#FFF",
+    marginVertical: 10,
+    marginHorizontal: 20,
     borderRadius: 10,
-    overflow: "hidden",
+    alignItems: "center",
   },
-  picker: {
-    width: "100%",
-    height: 55,
+  languageOptionText: {
+    fontSize: 18,
+    textAlign: "center",
     color: "#333",
   },
   backButton: {

@@ -1,11 +1,29 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FADBD8",
+  },
   container: {
     flex: 1,
-    backgroundColor: "#FADBD8", // Fond rose
+    backgroundColor: "#FADBD8",
     padding: 20,
     alignItems: "center",
+  },
+  editIndicatorContainer: {
+    marginBottom: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFD700",
+    paddingVertical: 5,
+    borderRadius: 5,
+    width: "100%",
+  },
+  editIndicator: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
   },
   avatarSection: {
     alignItems: "center",
@@ -41,6 +59,20 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#85C1E9",
   },
+  inputError: {
+    borderColor: "#F44336",
+    borderWidth: 1,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 5,
+    marginBottom: 10,
+    marginLeft: 10,
+    alignSelf: "center",
+    textAlign: "center",
+    width: "100%",
+  },
   infoSection: {
     width: "100%",
     marginVertical: 20,
@@ -56,17 +88,7 @@ export const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "bold",
-    flex: 1, // Prend de l'espace mais garde le texte aligné à droite
-  },
-  value: {
-    fontSize: 16,
-    color: "#555",
-    flex: 3, // Prend plus d'espace pour s'assurer que le label et la valeur ne se chevauchent pas
-    overflow: "hidden",
-    textAlign: "right",
-  },
-  textValue: {
-    marginLeft: 10, // Espace entre le label et la valeur
+    flex: 1,
   },
   input: {
     backgroundColor: "#FFF",
@@ -77,7 +99,17 @@ export const styles = StyleSheet.create({
     color: "#000",
   },
   inputValue: {
-    marginLeft: 10, // Espace entre le label et le champ d'entrée
+    marginLeft: 10,
+  },
+  value: {
+    fontSize: 16,
+    color: "#555",
+    flex: 3,
+    overflow: "hidden",
+    textAlign: "right",
+  },
+  textValue: {
+    marginLeft: 10,
   },
   actionSection: {
     width: "100%",
@@ -93,5 +125,29 @@ export const styles = StyleSheet.create({
     color: "#FFF",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  editActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+    width: "80%",
+  },
+  saveButton: {
+    backgroundColor: "#4CAF50",
+    padding: 10,
+    borderRadius: 5,
+    width: "48%",
+    alignItems: "center",
+  },
+  buttonText: {
+    fontSize: 16,
+    color: "#fff",
+  },
+  cancelButton: {
+    backgroundColor: "#F44336",
+    padding: 10,
+    borderRadius: 5,
+    width: "48%",
+    alignItems: "center",
   },
 });
