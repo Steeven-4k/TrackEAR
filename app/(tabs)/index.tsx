@@ -7,11 +7,11 @@ import { styles } from "./HomePage.style";
 import i18n from "../../constants/i18n";
 
 export default function App() {
-  const router = useRouter(); // Utilise le hook useRouter
+  const router = useRouter(); // Hook to navigate between pages
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           {/* Logo */}
           <View style={styles.logoContainer}>
@@ -21,11 +21,11 @@ export default function App() {
             />
           </View>
 
-          {/* Texte principal */}
+          {/* Main Text */}
           <Text style={styles.title}>{i18n.t("homeTitle")}</Text>
           <Text style={styles.subtitle}>{i18n.t("homeSubtitle")}</Text>
 
-          {/* Bouton principal */}
+          {/* Main Button */}
           <TouchableOpacity
             style={styles.button}
             onPress={() => router.push("/GeolocationPage")}
