@@ -1,42 +1,50 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
+
+const { width, height } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FADBD8",
+  },
   container: {
     flex: 1,
-    backgroundColor: "#FADBD8", // Couleur de fond
+    backgroundColor: "#FADBD8",
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: width * 0.05,
   },
   logoContainer: {
     alignItems: "center",
+    marginBottom: height * 0.02,
   },
   logo: {
-    width: 300,
-    height: 300, // Taille du logo, ajuste selon ton image
+    width: width * 0.6,
+    height: height * 0.3,
     resizeMode: "contain",
   },
   title: {
-    fontSize: 50,
+    fontSize: width * 0.08,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: 20,
+    marginTop: height * 0.02,
     color: "#333",
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: width * 0.04,
     textAlign: "center",
     color: "#666",
-    marginBottom: 30,
+    marginBottom: height * 0.03,
   },
   button: {
-    backgroundColor: "#85C1E9", // Couleur du bouton
-    paddingVertical: 15,
-    paddingHorizontal: 40,
+    backgroundColor: "#85C1E9",
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.1,
     borderRadius: 25,
-    marginVertical: 20,
+    marginVertical: height * 0.02,
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: width * 0.05,
     color: "#fff",
     fontWeight: "bold",
   },
