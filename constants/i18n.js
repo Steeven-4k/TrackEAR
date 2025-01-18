@@ -41,7 +41,7 @@ I18n.translations = {
       "Configure information of your relatives to alert in case of loss",
 
     // Devices Page
-    devicesPageTitle: "Connect your hearing aids",
+    devicesPageTitle: "Connect Your Hearing Aids",
     addDeviceButton: "Add a device",
     deviceConnectedAlertTitle: "Device Connected",
     deviceConnectedAlertMessage: "Your device is now connected!",
@@ -99,7 +99,7 @@ I18n.translations = {
     // Geolocation Page
 
     // Relatives Page
-    relativesPageTitle: "Contacts à alerter",
+    relativesPageTitle: "Contacts À Alerter",
     relativesPageSubtitle:
       "Les proches recevront une alerte en cas de perte de vos appareils auditifs",
     addRelativeButton: "Ajouter un proche",
@@ -121,7 +121,7 @@ I18n.translations = {
       "Configurez les informations de vos proches à alerter en cas de perte",
 
     // Devices Page
-    devicesPageTitle: "Connectez vos appareils auditifs",
+    devicesPageTitle: "Connectez Vos Appareils Auditifs",
     addDeviceButton: "Ajouter un appareil",
     deviceConnectedAlertTitle: "Appareil connecté",
     deviceConnectedAlertMessage: "Votre appareil est maintenant connecté !",
@@ -181,7 +181,7 @@ I18n.translations = {
     // Geolocation Page
 
     // Relatives Page
-    relativesPageTitle: "Contactos para alertar",
+    relativesPageTitle: "Contactos Para Alertar",
     relativesPageSubtitle:
       "Los familiares recibirán una alerta en caso de pérdida de sus audífonos",
     addRelativeButton: "Agregar un familiar",
@@ -203,7 +203,7 @@ I18n.translations = {
       "Configure la información de sus familiares para alertarlos en caso de pérdida",
 
     // Devices Page
-    devicesPageTitle: "Conecta tus audífonos",
+    devicesPageTitle: "Conecta Tus Audífonos",
     addDeviceButton: "Agregar un dispositivo",
     deviceConnectedAlertTitle: "Dispositivo conectado",
     deviceConnectedAlertMessage: "¡Tu dispositivo ahora está conectado!",
@@ -264,7 +264,7 @@ I18n.translations = {
     // Geolocation Page
 
     // Relatives Page
-    relativesPageTitle: "Kontakte zum Benachrichtigen",
+    relativesPageTitle: "Kontakte Zum Benachrichtigen",
     relativesPageSubtitle:
       "Verwandte werden im Verlustfall Ihrer Hörgeräte benachrichtigt",
     addRelativeButton: "Einen Verwandten hinzufügen",
@@ -345,7 +345,7 @@ I18n.translations = {
     // Geolocation Page
 
     // Relatives Page
-    relativesPageTitle: "Contatti da avvisare",
+    relativesPageTitle: "Contatti Da Avvisare",
     relativesPageSubtitle:
       "I parenti riceveranno un avviso in caso di perdita degli apparecchi acustici",
     addRelativeButton: "Aggiungi un parente",
@@ -367,7 +367,7 @@ I18n.translations = {
       "Configura le informazioni dei tuoi parenti da avvisare in caso di perdita",
 
     // Devices Page
-    devicesPageTitle: "Collega i tuoi apparecchi acustici",
+    devicesPageTitle: "Collega I Tuoi Apparecchi Acustici",
     addDeviceButton: "Aggiungi un dispositivo",
     deviceConnectedAlertTitle: "Dispositivo connesso",
     deviceConnectedAlertMessage: "Il tuo dispositivo è ora connesso!",
