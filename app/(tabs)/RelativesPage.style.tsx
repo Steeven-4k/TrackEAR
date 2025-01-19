@@ -1,56 +1,72 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
+
+// Get device screen width and height
+const { width, height } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FADBD8",
+  },
   container: {
     flex: 1,
     backgroundColor: "#FADBD8",
-    padding: 20,
+    padding: width * 0.05,
+    paddingBottom: height * 0.1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: width * 0.06,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: height * 0.01,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: width * 0.04,
     color: "#555",
-    marginBottom: 20,
+    marginBottom: height * 0.02,
   },
   listSubtitle: {
-    fontSize: 18,
+    fontSize: width * 0.045,
     fontWeight: "bold",
-    marginVertical: 10,
+    marginVertical: height * 0.015,
   },
   input: {
     backgroundColor: "#FFF",
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
+    padding: width * 0.04,
+    borderRadius: width * 0.02,
+    marginBottom: height * 0.015,
     borderWidth: 1,
     borderColor: "#DDD",
   },
   actionButton: {
     backgroundColor: "#85C1E9",
-    padding: 15,
-    borderRadius: 8,
+    paddingVertical: height * 0.015,
+    borderRadius: width * 0.02,
     alignItems: "center",
-    marginTop: 10,
+    marginTop: height * 0.02,
   },
   actionText: {
     color: "#FFF",
-    fontSize: 16,
+    fontSize: width * 0.045,
     fontWeight: "bold",
+  },
+  addContainer: {
+    backgroundColor: "#F8E7E4",
+    padding: width * 0.05,
+    borderRadius: width * 0.03,
+    marginVertical: height * 0.015,
   },
   addButton: {
     backgroundColor: "#D6EAF8",
-    padding: 15,
-    borderRadius: 8,
+    paddingVertical: height * 0.015,
+    borderRadius: width * 0.02,
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: height * 0.02,
   },
   addButtonText: {
     color: "#333",
-    fontSize: 16,
+    fontSize: width * 0.045,
     fontWeight: "bold",
   },
   listContainer: {
@@ -61,12 +77,12 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#FFF",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
+    padding: width * 0.04,
+    borderRadius: width * 0.02,
+    marginBottom: height * 0.015,
   },
   relativeName: {
-    fontSize: 16,
+    fontSize: width * 0.045,
     fontWeight: "bold",
   },
   buttonGroup: {
@@ -75,15 +91,27 @@ export const styles = StyleSheet.create({
   },
   detailButton: {
     backgroundColor: "#85C1E9",
-    padding: 5,
+    padding: width * 0.02,
     borderRadius: 50,
-    marginHorizontal: 5,
+    marginHorizontal: width * 0.02,
   },
   detailText: {
     color: "#FFF",
-    fontSize: 16,
+    fontSize: width * 0.045,
   },
   deleteButton: {
     backgroundColor: "#E74C3C",
+  },
+  inputError: {
+    borderColor: "#F44336",
+    borderWidth: 1,
+  },
+  errorText: {
+    color: "red",
+    fontSize: width * 0.035,
+    marginTop: height * 0.01,
+    marginBottom: height * 0.01,
+    textAlign: "center",
+    width: "100%",
   },
 });

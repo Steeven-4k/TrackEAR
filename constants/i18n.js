@@ -39,6 +39,15 @@ I18n.translations = {
     editRelativeSubtitle: "Modify information of your relative",
     addRelativeSubtitle:
       "Configure information of your relatives to alert in case of loss",
+    firstnameRequired: "Firstname is required.",
+    lastnameRequired: "Lastname is required.",
+    aliasRequired: "Alias is required.",
+    emailRequired: "Email is required.",
+    phoneRequired: "Phone is required.",
+    relativeSaved: "Relative saved successfully!",
+    confirmDelete: "Confirm Deletion",
+    deleteConfirmation: "Are you sure you want to delete this relative?",
+    success: "Success",
 
     // Devices Page
     devicesPageTitle: "Connect Your Hearing Aids",
@@ -62,8 +71,8 @@ I18n.translations = {
     enterPhone: "Enter your phone number",
     historic: "Historic",
     error: "Error",
-    invalidEmail: "Invalid email address",
-    invalidPhone: "Phone number must contain only digits.",
+    invalidEmail: "Invalid email format.",
+    invalidPhone: "Phone number should only contain digits.",
     saveChanges: "Save Changes",
     cancelChanges: "Cancel Changes",
     profileUpdated: "Profile updated successfully!",
@@ -119,6 +128,15 @@ I18n.translations = {
     editRelativeSubtitle: "Modifier les informations de votre proche",
     addRelativeSubtitle:
       "Configurez les informations de vos proches à alerter en cas de perte",
+    firstnameRequired: "Le prénom est requis.",
+    lastnameRequired: "Le nom est requis.",
+    aliasRequired: "Le pseudonyme est requis.",
+    emailRequired: "L'adresse email est requise.",
+    phoneRequired: "Le numéro de téléphone est requis.",
+    relativeSaved: "Proche sauvegardé avec succès !",
+    confirmDelete: "Confirmer la suppression",
+    deleteConfirmation: "Êtes-vous sûr de vouloir supprimer ce proche ?",
+    success: "Succès",
 
     // Devices Page
     devicesPageTitle: "Connectez Vos Appareils Auditifs",
@@ -142,9 +160,9 @@ I18n.translations = {
     enterPhone: "Entrez votre numéro de téléphone",
     historic: "Historique",
     error: "Erreur",
-    invalidEmail: "Adresse email invalide",
+    invalidEmail: "Format de l'adresse email invalide.",
     invalidPhone:
-      "Le numéro de téléphone doit contenir uniquement des chiffres.",
+      "Le numéro de téléphone doit uniquement contenir des chiffres.",
     saveChanges: "Sauvegarder les modifications",
     cancelChanges: "Annuler les modifications",
     profileUpdated: "Profil mis à jour avec succès !",
@@ -201,6 +219,15 @@ I18n.translations = {
     editRelativeSubtitle: "Modificar la información de su familiar",
     addRelativeSubtitle:
       "Configure la información de sus familiares para alertarlos en caso de pérdida",
+    firstnameRequired: "Se requiere el nombre.",
+    lastnameRequired: "Se requiere el apellido.",
+    aliasRequired: "Se requiere el alias.",
+    emailRequired: "Se requiere el correo electrónico.",
+    phoneRequired: "Se requiere el número de teléfono.",
+    relativeSaved: "¡Familiar guardado con éxito!",
+    confirmDelete: "Confirmar eliminación",
+    deleteConfirmation: "¿Está seguro de que desea eliminar este familiar?",
+    success: "Éxito",
 
     // Devices Page
     devicesPageTitle: "Conecta Tus Audífonos",
@@ -226,8 +253,8 @@ I18n.translations = {
     historic: "Historial",
     settings: "Configuraciones",
     error: "Error",
-    invalidEmail: "Dirección de correo electrónico no válida",
-    invalidPhone: "El número de teléfono debe contener solo dígitos.",
+    invalidEmail: "Formato de correo electrónico inválido.",
+    invalidPhone: "El número de teléfono solo debe contener dígitos.",
     nameRequired: "Se requiere el nombre.",
     saveChanges: "Guardar cambios",
     cancelChanges: "Cancelar cambios",
@@ -284,6 +311,16 @@ I18n.translations = {
     editRelativeSubtitle: "Informationen Ihres Verwandten bearbeiten",
     addRelativeSubtitle:
       "Konfigurieren Sie die Informationen Ihrer Verwandten, um sie im Verlustfall zu benachrichtigen",
+    firstnameRequired: "Der Vorname ist erforderlich.",
+    lastnameRequired: "Der Nachname ist erforderlich.",
+    aliasRequired: "Der Alias ist erforderlich.",
+    emailRequired: "Die E-Mail-Adresse ist erforderlich.",
+    phoneRequired: "Die Telefonnummer ist erforderlich.",
+    relativeSaved: "Verwandter erfolgreich gespeichert!",
+    confirmDelete: "Löschen bestätigen",
+    deleteConfirmation:
+      "Sind Sie sicher, dass Sie diesen Angehörigen löschen möchten?",
+    success: "Erfolg",
 
     // Devices Page
     devicesPageTitle: "Verbinden Sie Ihre Hörgeräte",
@@ -308,7 +345,7 @@ I18n.translations = {
     historic: "Verlauf",
     settings: "Einstellungen",
     error: "Fehler",
-    invalidEmail: "Ungültige E-Mail-Adresse",
+    invalidEmail: "Ungültiges E-Mail-Format.",
     invalidPhone: "Die Telefonnummer darf nur Ziffern enthalten.",
     nameRequired: "Der Name ist erforderlich.",
     saveChanges: "Änderungen speichern",
@@ -365,6 +402,15 @@ I18n.translations = {
     editRelativeSubtitle: "Modifica le informazioni del tuo parente",
     addRelativeSubtitle:
       "Configura le informazioni dei tuoi parenti da avvisare in caso di perdita",
+    firstnameRequired: "Il nome è obbligatorio.",
+    lastnameRequired: "Il cognome è obbligatorio.",
+    aliasRequired: "Il soprannome è obbligatorio.",
+    emailRequired: "L'indirizzo email è obbligatorio.",
+    phoneRequired: "Il numero di telefono è obbligatorio.",
+    relativeSaved: "Parente salvato con successo!",
+    confirmDelete: "Conferma eliminazione",
+    deleteConfirmation: "Sei sicuro di voler eliminare questo parente?",
+    success: "Successo",
 
     // Devices Page
     devicesPageTitle: "Collega I Tuoi Apparecchi Acustici",
@@ -390,7 +436,7 @@ I18n.translations = {
     historic: "Storico",
     settings: "Impostazioni",
     error: "Errore",
-    invalidEmail: "Indirizzo email non valido",
+    invalidEmail: "Formato dell'email non valido.",
     invalidPhone: "Il numero di telefono deve contenere solo cifre.",
     nameRequired: "Il nome è richiesto.",
     saveChanges: "Salva modifiche",
