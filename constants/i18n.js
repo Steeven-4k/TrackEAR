@@ -17,6 +17,17 @@ I18n.translations = {
     findYourAids: "Find Your Aids",
 
     // Geolocation Page
+    locationPermissionDenied: "Permission to access location was denied.",
+    noMarkersAvailable: "No markers available to center on.",
+    centerOnMe: "Center on Me",
+    centerOnAids: "Center on Aids",
+    yourLocation: "Your Location",
+    hearingAid: "Hearing Aid",
+    hearingAid1: "Hearing Aid 1",
+    hearingAid2: "Hearing Aid 2",
+    distance: "Distance",
+    selectHearingAid: "Select Hearing Aid",
+    chooseAidToCenter: "Choose which hearing aid to center on.",
 
     // Relatives Page
     relativesPageTitle: "Contacts To Alert",
@@ -106,6 +117,17 @@ I18n.translations = {
     findYourAids: "Trouvez vos appareils",
 
     // Geolocation Page
+    locationPermissionDenied: "Permission de localisation refusée.",
+    noMarkersAvailable: "Aucun marqueur disponible.",
+    centerOnMe: "Centrer sur moi",
+    centerOnAids: "Centrer sur l'aide",
+    yourLocation: "Votre Position",
+    hearingAid: "Prothèse Auditive",
+    hearingAid1: "Prothèse Auditive 1",
+    hearingAid2: "Prothèse Auditive 2",
+    distance: "Distance",
+    selectHearingAid: "Sélectionnez une aide auditive",
+    chooseAidToCenter: "Choisissez quelle aide auditive recentrer.",
 
     // Relatives Page
     relativesPageTitle: "Contacts À Alerter",
@@ -197,6 +219,17 @@ I18n.translations = {
     findYourAids: "Encuentra tus dispositivos",
 
     // Geolocation Page
+    locationPermissionDenied: "Permiso de ubicación denegado.",
+    noMarkersAvailable: "No hay marcadores disponibles.",
+    centerOnMe: "Centrar en mí",
+    centerOnAids: "Centrar en la ayuda",
+    yourLocation: "Tu Ubicación",
+    hearingAid: "Audífono",
+    hearingAid1: "Audífono 1",
+    hearingAid2: "Audífono 2",
+    distance: "Distancia",
+    selectHearingAid: "Seleccionar audífono",
+    chooseAidToCenter: "Elija qué audífono centrar.",
 
     // Relatives Page
     relativesPageTitle: "Contactos Para Alertar",
@@ -289,6 +322,17 @@ I18n.translations = {
     findYourAids: "Finden Sie Ihre Hörgeräte",
 
     // Geolocation Page
+    locationPermissionDenied: "Standorterlaubnis verweigert.",
+    noMarkersAvailable: "Keine Markierungen verfügbar.",
+    centerOnMe: "Auf mich zentrieren",
+    centerOnAids: "Auf Hörhilfe zentrieren",
+    yourLocation: "Ihr Standort",
+    hearingAid: "Hörgerät",
+    hearingAid1: "Hörgerät 1",
+    hearingAid2: "Hörgerät 2",
+    distance: "Entfernung",
+    selectHearingAid: "Hörgerät auswählen",
+    chooseAidToCenter: "Wählen Sie, welches Hörgerät zentriert werden soll.",
 
     // Relatives Page
     relativesPageTitle: "Kontakte Zum Benachrichtigen",
@@ -380,6 +424,17 @@ I18n.translations = {
     findYourAids: "Trova i tuoi dispositivi",
 
     // Geolocation Page
+    locationPermissionDenied: "Permesso di posizione negato.",
+    noMarkersAvailable: "Nessun marcatore disponibile.",
+    centerOnMe: "Centra su di me",
+    centerOnAids: "Centra sull'aiuto",
+    yourLocation: "La tua posizione",
+    hearingAid: "Apparecchio acustico",
+    hearingAid1: "Apparecchio acustico 1",
+    hearingAid2: "Apparecchio acustico 2",
+    distance: "Distanza",
+    selectHearingAid: "Seleziona apparecchio acustico",
+    chooseAidToCenter: "Scegli quale apparecchio acustico centrare.",
 
     // Relatives Page
     relativesPageTitle: "Contatti Da Avvisare",
