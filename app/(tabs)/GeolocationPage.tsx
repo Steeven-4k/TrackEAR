@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -14,21 +14,22 @@ import { Magnetometer } from "expo-sensors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { styles } from "./GeolocationPage.style";
 import i18n from "@/constants/i18n";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function GeolocationPage() {
-  // States to store location data
+  // State for storing user's current location coordinates
   const [currentLocation, setCurrentLocation] = useState({
     latitude: 48.8566,
     longitude: 2.3522,
   });
 
-  // States to store hearing aid data
+  // State to store a list of predefined hearing aid locations
   const [hearingAids, setHearingAids] = useState([
     { id: 1, latitude: 48.857, longitude: 2.3525, title: "hearingAid1" },
     { id: 2, latitude: 48.858, longitude: 2.353, title: "hearingAid2" },
   ]);
 
-  // States to store heading data
+  /// State for defining the map's visible region
   const [region, setRegion] = useState({
     latitude: 48.8566,
     longitude: 2.3522,
@@ -36,12 +37,18 @@ export default function GeolocationPage() {
     longitudeDelta: 0.01,
   });
 
+  // Loading state to show a spinner while fetching data
   const [loading, setLoading] = useState(true);
 
+  // State to track device orientation using the magnetometer
   const [heading, setHeading] = useState<number | null>(null);
 
+  // State to store the currently selected hearing aid
   const [selectedHearingAid, setSelectedHearingAid] =
     useState<HearingAid | null>(null);
+
+  // State to track location permission status
+  const [locationPermission, setLocationPermission] = useState(false);
 
   // Function to save location data to AsyncStorage
   const saveLocationData = async () => {
@@ -72,13 +79,13 @@ export default function GeolocationPage() {
     }
   };
 
-  // Load data on component mount and get current location
+  // Load data on component mount and get the user's current location
   useEffect(() => {
     loadLocationData();
     getCurrentLocation();
   }, []);
 
-  // Save location data when current location or hearing aids change
+  // Save location data whenever currentLocation or hearingAids change
   useEffect(() => {
     saveLocationData();
   }, [currentLocation, hearingAids]);
@@ -112,31 +119,71 @@ export default function GeolocationPage() {
 
   const THRESHOLD = 2; // Threshold to update compass heading
 
+  // Subscribes to the device's magnetometer sensor
   useEffect(() => {
     let lastAngle: number | null = null;
+
+    // Subscribe to the Magnetometer to get real-time orientation data
     const subscription = Magnetometer.addListener((data) => {
       let { x, y } = data;
+
+      // Calculate the angle in degrees based on magnetometer x and y values
       let angle = Math.atan2(y, x) * (180 / Math.PI);
+
+      // Convert negative angles to positive (0 to 360 degrees)
       angle = angle < 0 ? angle + 360 : angle;
 
+      // Update heading state only if the change exceeds a defined threshold
       if (lastAngle === null || Math.abs(lastAngle - angle) > THRESHOLD) {
         setHeading(angle);
         lastAngle = angle;
       }
     });
 
+    // Cleanup function to remove the listener when component unmounts
     return () => subscription.remove();
   }, []);
 
+  // Refresh the page whenever it is revisited
+  useFocusEffect(
+    useCallback(() => {
+      console.log("GeolocationPage refreshed");
+      refreshGeolocationPage();
+    }, [])
+  );
+
   // Function to retrieve the current location
   const getCurrentLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
+    // Check if permission is already granted
+    const { status } = await Location.getForegroundPermissionsAsync();
+
     if (status !== "granted") {
-      Alert.alert(i18n.t("error"), i18n.t("locationPermissionDenied"));
-      setLoading(false);
-      return;
+      setLocationPermission(false);
+      const { status: newStatus } =
+        await Location.requestForegroundPermissionsAsync();
+      if (newStatus !== "granted") {
+        setLocationPermission(false);
+        Alert.alert(
+          i18n.t("error"),
+          i18n.t("locationPermissionDenied"),
+          [
+            {
+              text: i18n.t("openSettings"),
+              onPress: () => Linking.openSettings(),
+            },
+          ],
+          { cancelable: false }
+        );
+        setLoading(false);
+        return;
+      } else {
+        setLocationPermission(true);
+      }
+    } else {
+      setLocationPermission(true);
     }
 
+    // Get the user's current position
     const location = await Location.getCurrentPositionAsync({});
     setCurrentLocation({
       latitude: location.coords.latitude,
@@ -190,7 +237,7 @@ export default function GeolocationPage() {
     lat2: number,
     lon2: number
   ): string => {
-    const R = 6371; // Radius of the Earth in km
+    const R = 6371; // Earth's radius in km
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
@@ -233,10 +280,28 @@ export default function GeolocationPage() {
     return conePoints;
   };
 
+  // Function to refresh the geolocation page
+  const refreshGeolocationPage = async () => {
+    setLoading(true);
+    setSelectedHearingAid(null);
+    await getCurrentLocation();
+    setLoading(false);
+  };
+
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#F00" />
+        <ActivityIndicator
+          size="large"
+          color="#F00"
+          style={styles.activityIndicator}
+        />
+      ) : !locationPermission ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>
+            {i18n.t("locationPermissionDenied")}
+          </Text>
+        </View>
       ) : (
         <>
           <MapView
@@ -248,7 +313,7 @@ export default function GeolocationPage() {
               }
             }}
           >
-            {/* Current location marker */}
+            {/* User's current location marker */}
             <Marker
               coordinate={currentLocation}
               title={i18n.t("yourLocation")}
@@ -264,7 +329,7 @@ export default function GeolocationPage() {
               strokeColor="rgba(0, 150, 255, 0.5)"
             />
 
-            {/* Hearing aid marker */}
+            {/* Hearing aid markers */}
             {hearingAids.map((device) => (
               <Marker
                 key={device.id}

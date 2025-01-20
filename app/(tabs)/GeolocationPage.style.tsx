@@ -64,4 +64,27 @@ export const styles = StyleSheet.create({
     height: height * 0.07,
     borderRadius: 8,
   },
+  activityIndicator: {
+    position: "absolute",
+    top: height * 0.15,
+    left: width * 0.5 - 25,
+  },
+  errorContainer: {
+    position: "absolute",
+    top: height * 0.1,
+    left: width * 0.1,
+    right: width * 0.1,
+    backgroundColor: "rgba(255, 0, 0, 0.8)",
+    padding: height * 0.02,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  errorText: {
+    color: "#fff",
+    fontSize: width * 0.04,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
 });
