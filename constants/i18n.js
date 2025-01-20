@@ -28,6 +28,7 @@ I18n.translations = {
     distance: "Distance",
     selectHearingAid: "Select Hearing Aid",
     chooseAidToCenter: "Choose which hearing aid to center on.",
+    openSettings: "Open Settings",
 
     // Relatives Page
     relativesPageTitle: "Contacts To Alert",
@@ -128,6 +129,7 @@ I18n.translations = {
     distance: "Distance",
     selectHearingAid: "Sélectionnez une aide auditive",
     chooseAidToCenter: "Choisissez quelle aide auditive recentrer.",
+    openSettings: "Ouvrir les paramètres",
 
     // Relatives Page
     relativesPageTitle: "Contacts À Alerter",
@@ -230,6 +232,7 @@ I18n.translations = {
     distance: "Distancia",
     selectHearingAid: "Seleccionar audífono",
     chooseAidToCenter: "Elija qué audífono centrar.",
+    openSettings: "Abrir configuración",
 
     // Relatives Page
     relativesPageTitle: "Contactos Para Alertar",
@@ -333,6 +336,7 @@ I18n.translations = {
     distance: "Entfernung",
     selectHearingAid: "Hörgerät auswählen",
     chooseAidToCenter: "Wählen Sie, welches Hörgerät zentriert werden soll.",
+    openSettings: "Einstellungen öffnen",
 
     // Relatives Page
     relativesPageTitle: "Kontakte Zum Benachrichtigen",
@@ -435,6 +439,7 @@ I18n.translations = {
     distance: "Distanza",
     selectHearingAid: "Seleziona apparecchio acustico",
     chooseAidToCenter: "Scegli quale apparecchio acustico centrare.",
+    openSettings: "Apri impostazioni",
 
     // Relatives Page
     relativesPageTitle: "Contatti Da Avvisare",

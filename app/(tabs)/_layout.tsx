@@ -1,6 +1,8 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { Platform } from "react-native";
+import { useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 import { HapticTab } from "@/components/HapticTab";
 import { IconSymbol } from "@/components/ui/IconSymbol";
@@ -13,6 +15,23 @@ import I18n from "../../constants/i18n";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+
+  const navigation = useNavigation();
+
+  // Refresh GeolocationPage
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("state", () => {
+      const currentRoute = navigation
+        .getState()
+        ?.routes?.find((route) => route.name === "GeolocationPage");
+
+      if (currentRoute) {
+        navigation.navigate("GeolocationPage" as never);
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <Tabs
