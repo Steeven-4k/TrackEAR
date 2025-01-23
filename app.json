@@ -15,7 +15,13 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.steeven4k.trackearapp",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDlRMt_nZt0SBclKQQW-nlZMEtKgzaQLio"
+        }
+    },
     },
     "web": {
       "bundler": "metro",
@@ -33,7 +39,8 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      "react-native-ble-manager"
     ],
     "experiments": {
       "typedRoutes": true

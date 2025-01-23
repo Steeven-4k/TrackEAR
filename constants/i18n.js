@@ -10,6 +10,7 @@ I18n.translations = {
     relativesTab: "Relatives",
     devicesTab: "Devices",
     profileTab: "Profile",
+    fallbackMessage: "Translation not available",
 
     // Home Page
     homeTitle: "Find the sound, wherever it is",
@@ -62,18 +63,33 @@ I18n.translations = {
     success: "Success",
 
     // Devices Page
-    devicesPageTitle: "Connect Your Hearing Aids",
+    devicesPageTitle: "Connect Your Hearing Devices",
     addDeviceButton: "Add a device",
-    deviceConnectedAlertTitle: "Device Connected",
-    deviceConnectedAlertMessage: "Your device is now connected!",
-    forgetDeviceAlertTitle: "Forget Device",
+    deviceConnectedAlertTitle: "Device connected",
+    forgetDeviceAlertTitle: "Forget device",
     forgetDeviceAlertMessage: "Are you sure you want to forget this device?",
     forgetDeviceConfirm: "Yes",
     forgetDeviceCancel: "Cancel",
-    deviceInfoTitle: "Device Info",
-    currentLocation: "Current Location",
-    forgetDeviceButton: "Forget the device",
+    forgetDeviceButton: "Forget device",
     close: "Close",
+    unknownDevice: "Unknown device",
+    noDevicesFound: "No devices connected.",
+    scanning: "Scanning...",
+    noDevicesMessage:
+      "Make sure your Bluetooth device is in pairing mode and try again.",
+    bluetoothDevices: "Bluetooth Devices",
+    connectedTo: "Connected to",
+    error: "Error",
+    scanError: "Scan failed",
+    connectionFailed: "Connection failed",
+    tryAgain: "Please try again",
+    connected: "Connected",
+    disconnected: "Device successfully disconnected",
+    disconnectFailed: "Disconnection failed",
+    loadBluetoothError:
+      "Unable to reconnect to your device. Please check your Bluetooth connection.",
+    permissionsDenied:
+      "Bluetooth permissions were denied. Please enable them in settings.",
 
     // Profile Page
     email: "Email",
@@ -111,6 +127,7 @@ I18n.translations = {
     relativesTab: "Contacts",
     devicesTab: "Appareils",
     profileTab: "Profil",
+    fallbackMessage: "Traduction non disponible",
 
     // Home Page
     homeTitle: "Trouvez le son, où qu'il soit",
@@ -165,16 +182,31 @@ I18n.translations = {
     // Devices Page
     devicesPageTitle: "Connectez Vos Appareils Auditifs",
     addDeviceButton: "Ajouter un appareil",
-    deviceConnectedAlertTitle: "Appareil connecté",
-    deviceConnectedAlertMessage: "Votre appareil est maintenant connecté !",
+    deviceConnectedAlertTitle: "Appareil Connecté",
     forgetDeviceAlertTitle: "Oublier l'appareil",
-    forgetDeviceAlertMessage: "Êtes-vous sûr de vouloir oublier cet appareil ?",
+    forgetDeviceAlertMessage: "Êtes-vous sûr de vouloir oublier cet appareil ?",
     forgetDeviceConfirm: "Oui",
     forgetDeviceCancel: "Annuler",
-    deviceInfoTitle: "Informations sur l'appareil",
-    currentLocation: "Localisation actuelle",
     forgetDeviceButton: "Oublier l'appareil",
     close: "Fermer",
+    unknownDevice: "Appareil inconnu",
+    noDevicesFound: "Aucun appareil connecté.",
+    scanning: "Scan en cours...",
+    noDevicesMessage:
+      "Assurez-vous que votre appareil Bluetooth est en mode de couplage et réessayez.",
+    bluetoothDevices: "Appareils Bluetooth",
+    connectedTo: "Connecté à",
+    error: "Erreur",
+    scanError: "Échec du scan",
+    connectionFailed: "Échec de la connexion",
+    tryAgain: "Veuillez réessayer.",
+    connected: "Connecté",
+    disconnected: "Appareil déconnecté avec succès.",
+    disconnectFailed: "Échec de la déconnexion.",
+    loadBluetoothError:
+      "Impossible de se reconnecter à votre appareil. Veuillez vérifier votre connexion Bluetooth.",
+    permissionsDenied:
+      "Les autorisations Bluetooth ont été refusées. Veuillez les activer dans les paramètres.",
 
     // Profile Page
     email: "Email",
@@ -214,6 +246,7 @@ I18n.translations = {
     relativesTab: "Contactos",
     devicesTab: "Dispositivos",
     profileTab: "Perfil",
+    fallbackMessage: "Traducción no disponible",
 
     // Home Page
     homeTitle: "Encuentra el sonido, donde sea que esté",
@@ -266,19 +299,34 @@ I18n.translations = {
     success: "Éxito",
 
     // Devices Page
-    devicesPageTitle: "Conecta Tus Audífonos",
+    devicesPageTitle: "Conecta tus dispositivos auditivos",
     addDeviceButton: "Agregar un dispositivo",
     deviceConnectedAlertTitle: "Dispositivo conectado",
-    deviceConnectedAlertMessage: "¡Tu dispositivo ahora está conectado!",
     forgetDeviceAlertTitle: "Olvidar dispositivo",
     forgetDeviceAlertMessage:
-      "¿Estás seguro de que deseas olvidar este dispositivo?",
+      "¿Estás seguro de que quieres olvidar este dispositivo?",
     forgetDeviceConfirm: "Sí",
     forgetDeviceCancel: "Cancelar",
-    deviceInfoTitle: "Información del dispositivo",
-    currentLocation: "Ubicación actual",
     forgetDeviceButton: "Olvidar dispositivo",
     close: "Cerrar",
+    unknownDevice: "Dispositivo desconocido",
+    noDevicesFound: "Ningún dispositivo conectado.",
+    scanning: "Escaneando...",
+    noDevicesMessage:
+      "Asegúrese de que su dispositivo Bluetooth esté en modo de emparejamiento y vuelva a intentarlo.",
+    bluetoothDevices: "Dispositivos Bluetooth",
+    connectedTo: "Conectado a",
+    error: "Error",
+    scanError: "Error de escaneo",
+    connectionFailed: "Error de conexión",
+    tryAgain: "Por favor, inténtelo de nuevo",
+    connected: "Conectado",
+    disconnected: "Dispositivo desconectado con éxito",
+    disconnectFailed: "Error al desconectar",
+    loadBluetoothError:
+      "No se puede volver a conectar con su dispositivo. Por favor, verifique su conexión Bluetooth.",
+    permissionsDenied:
+      "Se denegaron los permisos de Bluetooth. Habilítelos en la configuración.",
 
     // Profile Page
     email: "Correo electrónico",
@@ -318,6 +366,7 @@ I18n.translations = {
     relativesTab: "Kontakte",
     devicesTab: "Geräte",
     profileTab: "Profil",
+    fallbackMessage: "Übersetzung nicht verfügbar",
 
     // Home Page
     homeTitle: "Finden Sie den Klang, wo auch immer er ist",
@@ -371,18 +420,34 @@ I18n.translations = {
     success: "Erfolg",
 
     // Devices Page
-    devicesPageTitle: "Verbinden Sie Ihre Hörgeräte",
-    addDeviceButton: "Ein Gerät hinzufügen",
+    devicesPageTitle: "Verbinde deine Hörgeräte",
+    addDeviceButton: "Gerät hinzufügen",
     deviceConnectedAlertTitle: "Gerät verbunden",
-    deviceConnectedAlertMessage: "Ihr Gerät ist jetzt verbunden!",
     forgetDeviceAlertTitle: "Gerät vergessen",
-    forgetDeviceAlertMessage: "Möchten Sie dieses Gerät wirklich vergessen?",
+    forgetDeviceAlertMessage:
+      "Sind Sie sicher, dass Sie dieses Gerät vergessen möchten?",
     forgetDeviceConfirm: "Ja",
     forgetDeviceCancel: "Abbrechen",
-    deviceInfoTitle: "Geräteinformationen",
-    currentLocation: "Aktueller Standort",
     forgetDeviceButton: "Gerät vergessen",
     close: "Schließen",
+    unknownDevice: "Unbekanntes Gerät",
+    noDevicesFound: "Keine Geräte verbunden.",
+    scanning: "Scannen läuft...",
+    noDevicesMessage:
+      "Stellen Sie sicher, dass sich Ihr Bluetooth-Gerät im Kopplungsmodus befindet, und versuchen Sie es erneut.",
+    bluetoothDevices: "Bluetooth-Geräte",
+    connectedTo: "Verbunden mit",
+    error: "Fehler",
+    scanError: "Scan fehlgeschlagen",
+    connectionFailed: "Verbindung fehlgeschlagen",
+    tryAgain: "Bitte versuchen Sie es erneut",
+    connected: "Verbunden",
+    disconnected: "Gerät erfolgreich getrennt",
+    disconnectFailed: "Trennung fehlgeschlagen",
+    loadBluetoothError:
+      "Es kann keine Verbindung zu Ihrem Gerät hergestellt werden. Bitte überprüfen Sie Ihre Bluetooth-Verbindung.",
+    permissionsDenied:
+      "Bluetooth-Berechtigungen wurden verweigert. Bitte aktivieren Sie sie in den Einstellungen.",
 
     // Profile Page
     email: "E-Mail",
@@ -421,6 +486,7 @@ I18n.translations = {
     relativesTab: "Contatti",
     devicesTab: "Dispositivi",
     profileTab: "Profilo",
+    fallbackMessage: "Traduzione non disponibile",
 
     // Home Page
     homeTitle: "Trova il suono, ovunque sia",
@@ -473,19 +539,34 @@ I18n.translations = {
     success: "Successo",
 
     // Devices Page
-    devicesPageTitle: "Collega I Tuoi Apparecchi Acustici",
+    devicesPageTitle: "Collega i tuoi apparecchi acustici",
     addDeviceButton: "Aggiungi un dispositivo",
     deviceConnectedAlertTitle: "Dispositivo connesso",
-    deviceConnectedAlertMessage: "Il tuo dispositivo è ora connesso!",
     forgetDeviceAlertTitle: "Dimentica dispositivo",
     forgetDeviceAlertMessage:
       "Sei sicuro di voler dimenticare questo dispositivo?",
     forgetDeviceConfirm: "Sì",
     forgetDeviceCancel: "Annulla",
-    deviceInfoTitle: "Informazioni sul dispositivo",
-    currentLocation: "Posizione attuale",
     forgetDeviceButton: "Dimentica dispositivo",
-    close: "Chiudere",
+    close: "Chiudi",
+    unknownDevice: "Dispositivo sconosciuto",
+    noDevicesFound: "Nessun dispositivo connesso.",
+    scanning: "Scansione in corso...",
+    noDevicesMessage:
+      "Assicurati che il tuo dispositivo Bluetooth sia in modalità di associazione e riprova.",
+    bluetoothDevices: "Dispositivi Bluetooth",
+    connectedTo: "Connesso a",
+    error: "Errore",
+    scanError: "Scansione fallita",
+    connectionFailed: "Connessione fallita",
+    tryAgain: "Riprova per favore",
+    connected: "Connesso",
+    disconnected: "Dispositivo disconnesso con successo",
+    disconnectFailed: "Disconnessione fallita",
+    loadBluetoothError:
+      "Impossibile riconnettersi al dispositivo. Controlla la tua connessione Bluetooth.",
+    permissionsDenied:
+      "Le autorizzazioni Bluetooth sono state negate. Abilitarle nelle impostazioni.",
 
     // Profile Page
     email: "Email",

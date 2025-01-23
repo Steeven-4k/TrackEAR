@@ -1,114 +1,242 @@
+import React, { useEffect, useState } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
-
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  PermissionsAndroid,
+  ActivityIndicator,
+  Platform,
+} from "react-native";
+import { Device } from "react-native-ble-plx";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BleManager } from "react-native-ble-plx";
+import I18n from "../../constants/i18n";
 import { styles } from "./DevicesPages.style";
-import i18n from "../../constants/i18n";
 
-import { useRouter } from "expo-router";
+// Initialize BLE manager
+const manager = new BleManager();
 
-export default function DevicesPage() {
-  const router = useRouter(); // Hook to navigate between pages
+const DevicesPage = () => {
+  // States to manage devices and scanning status
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [isScanning, setIsScanning] = useState<boolean>(false);
+  const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
 
-  const [isDeviceConnected, setIsDeviceConnected] = useState(false); // State to track whether a device is connected
+  // Load stored device and request permissions for Android
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      requestAndroidPermissions();
+    }
+    loadStoredDevice();
+    return () => {
+      manager.stopDeviceScan();
+    };
+  }, []);
 
-  // Interface defining the structure of a device object
-  interface Device {
-    name: string;
-    model: string;
-    modelNumber: string;
-    serialNumber: string;
-    version: string;
-  }
+  // Request necessary Bluetooth permissions on Android
+  const requestAndroidPermissions = async () => {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      ]);
 
-  const [device, setDevice] = useState<Device | null>(null); // State to store the connected device information
-
-  // Function to simulate connecting a device
-  const handleConnectDevice = () => {
-    Alert.alert(
-      i18n.t("deviceConnectedAlertTitle"),
-      i18n.t("deviceConnectedAlertMessage")
-    );
-    setIsDeviceConnected(true); // Update the state to indicate a device is connected
-    setDevice({
-      name: "My Hearing Aids",
-      model: "Hearing Aid Pro",
-      modelNumber: "A9548",
-      serialNumber: "JSHDFEH544D",
-      version: "2E93",
-    });
+      if (
+        granted["android.permission.BLUETOOTH_SCAN"] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        granted["android.permission.BLUETOOTH_CONNECT"] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        granted["android.permission.ACCESS_FINE_LOCATION"] ===
+          PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        console.log("Bluetooth permissions granted");
+      } else {
+        Alert.alert(I18n.t("error"), I18n.t("permissionsDenied"));
+      }
+    } catch (err) {
+      console.warn(err);
+    }
   };
 
-  // Function to simulate forgetting a connected device
-  const handleForgetDevice = () => {
-    Alert.alert(
-      i18n.t("forgetDeviceAlertTitle"),
-      i18n.t("forgetDeviceAlertMessage"),
-      [
-        { text: i18n.t("forgetDeviceCancel"), style: "cancel" },
-        {
-          text: i18n.t("forgetDeviceConfirm"),
-          style: "destructive",
-          onPress: () => {
-            setIsDeviceConnected(false); // Reset the connection state
-            setDevice(null); // Clear the device information
+  // Load connected device from AsyncStorage
+  const loadStoredDevice = async () => {
+    try {
+      const deviceId = await AsyncStorage.getItem("connectedDevice");
+      if (deviceId) {
+        const device = await manager.connectToDevice(deviceId);
+        setConnectedDevice(device);
+        Alert.alert(
+          I18n.t("connected"),
+          `${I18n.t("connectedTo")} ${device.name}`
+        );
+      }
+    } catch (error) {
+      console.error("Failed to load stored device:", error);
+      Alert.alert(I18n.t("error"), I18n.t("loadBluetoothError"));
+    }
+  };
+
+  // Start scanning for BLE devices
+  const startScan = () => {
+    setDevices([]);
+    setIsScanning(true);
+    let foundDevices: Device[] = [];
+
+    manager.startDeviceScan(null, null, (error, device: Device | null) => {
+      if (error) {
+        console.error("Scan error:", error);
+        Alert.alert(I18n.t("scanError"), I18n.t("noDevicesMessage"));
+        setIsScanning(false);
+        return;
+      }
+
+      if (device && device.name) {
+        foundDevices.push(device);
+        setDevices((prevDevices) => {
+          if (!prevDevices.some((d) => d.id === device.id)) {
+            return [...prevDevices, device];
+          }
+          return prevDevices;
+        });
+      }
+    });
+
+    setTimeout(() => {
+      manager.stopDeviceScan();
+      setIsScanning(false);
+      if (foundDevices.length === 0) {
+        Alert.alert(I18n.t("noDevicesFound"), I18n.t("tryAgain"));
+      }
+    }, 30000);
+  };
+
+  // Function to connect to a BLE device
+  const connectToDevice = async (device: Device) => {
+    try {
+      setIsScanning(false);
+      console.log("Connecting to device:" + " " + device.name);
+
+      const connected = await manager.connectToDevice(device.id);
+      await connected.discoverAllServicesAndCharacteristics();
+
+      setConnectedDevice(connected);
+      await AsyncStorage.setItem("connectedDevice", device.id);
+      Alert.alert(
+        I18n.t("connected"),
+        I18n.t("connectedTo") + " " + device.name
+      );
+
+      console.log("Connected to device:", device.name);
+
+      // Discover services and characteristics
+      const services = await connected.services();
+      services.forEach(async (service) => {
+        const characteristics = await service.characteristics();
+        characteristics.forEach((char) => {
+          console.log("Found characteristic:" + " " + char.uuid);
+        });
+      });
+    } catch (error) {
+      console.error("Connection error:", error);
+      Alert.alert(I18n.t("error"), I18n.t("connectionFailed"));
+    }
+  };
+
+  // Function to disconnect from a BLE device
+  const disconnectDevice = async () => {
+    if (connectedDevice) {
+      Alert.alert(
+        I18n.t("forgetDeviceAlertTitle"),
+        I18n.t("forgetDeviceAlertMessage"),
+        [
+          {
+            text: I18n.t("forgetDeviceCancel"),
+            style: "cancel",
           },
-        },
-      ]
-    );
+          {
+            text: I18n.t("forgetDeviceConfirm"),
+            onPress: async () => {
+              try {
+                await manager.cancelDeviceConnection(connectedDevice.id);
+                setConnectedDevice(null);
+                await AsyncStorage.removeItem("connectedDevice");
+                console.log("Disconnected from device");
+                Alert.alert(I18n.t("success"), I18n.t("disconnected"));
+              } catch (error) {
+                Alert.alert(I18n.t("error"), I18n.t("disconnectFailed"));
+                console.error("Disconnection error:", error);
+              }
+            },
+          },
+        ]
+      );
+    }
   };
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
-          <Text style={styles.title}>{i18n.t("devicesPageTitle")}</Text>
+          <Text style={styles.title}>{I18n.t("devicesPageTitle")}</Text>
 
-          {/* If no device is connected, show the add button */}
-          {!isDeviceConnected ? (
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={handleConnectDevice}
-            >
-              <Text style={styles.addButtonText}>
-                {i18n.t("addDeviceButton")}
+          {/* Scanning Button */}
+          <TouchableOpacity
+            style={styles.scanButton}
+            onPress={startScan}
+            disabled={isScanning}
+          >
+            <Text style={styles.scanButtonText}>
+              {isScanning ? I18n.t("scanning") : I18n.t("addDeviceButton")}
+            </Text>
+          </TouchableOpacity>
+
+          {isScanning && <ActivityIndicator size="large" color="#85C1E9" />}
+
+          {/* Visible Devices */}
+          <Text style={styles.sectionTitle}>{I18n.t("bluetoothDevices")}</Text>
+          <FlatList
+            data={devices}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.deviceRow}
+                onPress={() => connectToDevice(item)}
+              >
+                <Text style={styles.deviceName}>
+                  {item.name || I18n.t("unknownDevice")}
+                </Text>
+                <Text style={styles.deviceId}>{item.id}</Text>
+              </TouchableOpacity>
+            )}
+          />
+
+          {/* Connected Device */}
+          {connectedDevice && (
+            <View>
+              <Text style={styles.sectionTitle}>
+                {I18n.t("deviceConnectedAlertTitle")}
               </Text>
-            </TouchableOpacity>
-          ) : (
-            <>
-              {/* Display the connected device */}
-              <View style={styles.deviceRow}>
-                {device && <Text style={styles.deviceName}>{device.name}</Text>}
-                <TouchableOpacity
-                  style={styles.infoButton}
-                  onPress={() =>
-                    device &&
-                    Alert.alert(
-                      i18n.t("deviceInfoTitle"),
-                      `Model Name: ${device.model}\nModel N°: ${device.modelNumber}\nSerial N°: ${device.serialNumber}\nVersion: ${device.version}`, // Device details
-                      [
-                        {
-                          text: i18n.t("currentLocation"), // Option to go to Geolocation page
-                          onPress: () => router.push("/GeolocationPage"),
-                        },
-                        {
-                          text: i18n.t("forgetDeviceButton"), // Option to forget the device
-                          style: "destructive",
-                          onPress: handleForgetDevice,
-                        },
-                        { text: i18n.t("close"), style: "cancel" }, // Close the alert
-                      ]
-                    )
-                  }
-                >
-                  {/* Info button */}
-                  <Text style={styles.infoText}>ℹ️</Text>
+              <View style={styles.connectedDevice}>
+                <Text style={styles.connectedText}>
+                  {I18n.t("connectedTo")}{" "}
+                  {connectedDevice?.name || I18n.t("unknownDevice")}
+                </Text>
+                <TouchableOpacity onPress={disconnectDevice}>
+                  <Text style={styles.scanButtonText}>
+                    {I18n.t("forgetDeviceButton")}
+                  </Text>
                 </TouchableOpacity>
               </View>
-            </>
+            </View>
           )}
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
-}
+};
+
+export default DevicesPage;
