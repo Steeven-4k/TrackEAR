@@ -234,7 +234,12 @@ export default function RelativesPage() {
                 placeholderTextColor="#888"
                 value={currentRelative?.firstname || ""}
                 onChangeText={(text) =>
-                  setCurrentRelative((prev) => ({ ...prev!, firstname: text }))
+                  setCurrentRelative((prev) => ({
+                    ...prev!,
+                    firstname:
+                      text.charAt(0).toUpperCase() +
+                      text.slice(1).toLowerCase(),
+                  }))
                 }
                 returnKeyType="done"
                 maxLength={30}
@@ -251,6 +256,7 @@ export default function RelativesPage() {
                 placeholder={i18n.t("lastname")}
                 placeholderTextColor="#888"
                 value={currentRelative?.lastname || ""}
+                autoCapitalize="characters"
                 onChangeText={(text) =>
                   setCurrentRelative((prev) => ({ ...prev!, lastname: text }))
                 }
@@ -376,8 +382,8 @@ export default function RelativesPage() {
                   <View style={styles.relativeItem}>
                     {/* Truncate the firstname and lastname if too long */}
                     <Text style={styles.relativeName}>
-                      {truncateText(item.firstname, 10)}{" "}
-                      {truncateText(item.lastname, 10)}
+                      {truncateText(item.firstname, 13)}{" "}
+                      {truncateText(item.lastname, 12)}
                     </Text>
                     <View style={styles.buttonGroup}>
                       <TouchableOpacity
