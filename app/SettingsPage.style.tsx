@@ -1,4 +1,7 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet, Platform } from "react-native";
+
+// Get device screen width and height
+const { width, height } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
   safeArea: {
@@ -8,21 +11,21 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FADBD8",
-    padding: 20,
+    padding: width * 0.05,
   },
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
+    marginBottom: height * 0.025,
   },
   titleIcon: {
-    width: 40,
-    height: 40,
-    marginRight: 10,
+    width: width * 0.15,
+    height: width * 0.15,
+    marginRight: width * 0.025,
   },
   title: {
-    fontSize: 40,
+    fontSize: width * 0.1,
     fontWeight: "bold",
     color: "#333",
   },
@@ -30,47 +33,49 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 15,
+    paddingVertical: height * 0.018,
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
   },
   label: {
-    fontSize: 16,
+    fontSize: width * 0.04,
     color: "#333",
   },
   sectionTitleRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: height * 0.012,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: width * 0.045,
     fontWeight: "bold",
-    marginVertical: 20,
+    marginVertical: height * 0.025,
     color: "#555",
-    marginRight: 5,
+    marginRight: width * 0.02,
   },
   hintButton: {
     backgroundColor: "#85C1E9",
-    width: 25,
-    height: 25,
-    borderRadius: 10,
+    width: width * 0.07,
+    height: width * 0.07,
+    borderRadius: width * 0.05,
     alignItems: "center",
     justifyContent: "center",
   },
   hintText: {
     color: "#FFF",
-    fontSize: 14,
+    fontSize: width * 0.04,
     fontWeight: "bold",
   },
   languageSelector: {
-    padding: 15,
-    borderRadius: 10,
+    padding: width * 0.04,
+    borderRadius: width * 0.02,
+    borderWidth: width * 0.002,
+    borderColor: "#ddd",
     backgroundColor: "#FFF",
-    marginVertical: 10,
+    marginVertical: height * 0.012,
   },
   languageText: {
-    fontSize: 16,
+    fontSize: width * 0.045,
     color: "#333",
   },
   modalContainer: {
@@ -83,28 +88,31 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   languageOption: {
-    padding: 20,
+    padding: width * 0.05,
     backgroundColor: "#FFF",
-    marginVertical: 10,
-    marginHorizontal: 20,
-    borderRadius: 10,
+    marginVertical: height * 0.013,
+    marginHorizontal: width * 0.05,
+    borderRadius: width * 0.02,
+    borderWidth: width * 0.002,
+    borderColor: "#FADBD8",
     alignItems: "center",
   },
   languageOptionText: {
-    fontSize: 18,
+    fontSize: width * 0.06,
     textAlign: "center",
     color: "#333",
   },
   backButton: {
     backgroundColor: "#85C1E9",
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 30,
+    padding: width * 0.05,
+    borderRadius: width * 0.02,
+    marginTop: height * 0.04,
     alignItems: "center",
+    justifyContent: "center",
   },
   backButtonText: {
     color: "#FFF",
-    fontSize: 16,
+    fontSize: width * 0.045,
     fontWeight: "bold",
   },
 });
