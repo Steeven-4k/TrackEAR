@@ -8,10 +8,13 @@ import {
   FlatList,
   Image,
   Alert,
+  Platform,
+  Linking,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import * as Notifications from "expo-notifications";
 
 import { styles } from "./SettingsPage.style";
 import i18n from "../constants/i18n";
@@ -20,7 +23,7 @@ export default function SettingsPage() {
   const router = useRouter(); // Router for navigation
 
   // States for various settings
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
   const [contactByEmail, setContactByEmail] = useState(true);
   const [contactByPhone, setContactByPhone] = useState(true);
@@ -48,6 +51,69 @@ export default function SettingsPage() {
     loadLanguage();
   }, []);
 
+  // Check notification permissions
+  useEffect(() => {
+    const checkNotificationPermission = async () => {
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status === "granted") {
+        setNotificationsEnabled(true); // Activate if already granted
+      } else {
+        setNotificationsEnabled(false); // Deactivated if denied
+      }
+    };
+    checkNotificationPermission();
+  }, []);
+
+  // Load saved notification settings
+  useEffect(() => {
+    const loadNotificationSettings = async () => {
+      const savedNotifications = await AsyncStorage.getItem(
+        "notificationsEnabled"
+      );
+      if (savedNotifications !== null) {
+        setNotificationsEnabled(JSON.parse(savedNotifications));
+      }
+    };
+    loadNotificationSettings();
+  }, []);
+
+  // Function to handle notification permission request
+  const handleNotificationToggle = async (value: boolean) => {
+    if (value) {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          i18n.t("permissionsDenied"),
+          i18n.t("notificationPermissionDenied"),
+          [
+            {
+              text: i18n.t("cancel"),
+              style: "cancel",
+            },
+            {
+              text: i18n.t("openSettings"),
+              onPress: () => {
+                if (Platform.OS === "android") {
+                  Linking.openSettings();
+                } else {
+                  Linking.openURL("app-settings:");
+                }
+              },
+            },
+          ]
+        );
+        setNotificationsEnabled(false);
+        return;
+      }
+      Alert.alert(
+        i18n.t("enableNotifications"),
+        i18n.t("notificationsActivated")
+      );
+    }
+    setNotificationsEnabled(value);
+    await AsyncStorage.setItem("notificationsEnabled", JSON.stringify(value));
+  };
+
   // Function to change the app's language
   const changeLanguage = async (lang: string) => {
     i18n.locale = lang; // Update i18n locale
@@ -60,13 +126,13 @@ export default function SettingsPage() {
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
-          {/* Titre */}
+          {/* Title */}
           <View style={styles.titleContainer}>
             <Image
               source={require("../assets/images/settings-icon.png")}
               style={styles.titleIcon}
             />
-            <Text style={styles.title}>{i18n.t("settings")}</Text>
+            <Text style={styles.title}>{i18n.t("settingsTitle")}</Text>
           </View>
 
           {/* Notifications */}
@@ -74,7 +140,7 @@ export default function SettingsPage() {
             <Text style={styles.label}>{i18n.t("enableNotifications")}</Text>
             <Switch
               value={notificationsEnabled}
-              onValueChange={(value) => setNotificationsEnabled(value)}
+              onValueChange={(value) => handleNotificationToggle(value)}
             />
           </View>
 
@@ -157,7 +223,7 @@ export default function SettingsPage() {
             </View>
           </Modal>
 
-          {/* Back Button */}
+          {/* Save Button */}
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => router.push("/ProfilePage")}

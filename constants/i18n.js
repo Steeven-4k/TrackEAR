@@ -82,6 +82,7 @@ I18n.translations = {
     enterEmail: "Enter your email",
     enterPhone: "Enter your phone number",
     historic: "Historic",
+    settings: "Settings",
     error: "Error",
     invalidEmail: "Invalid email format.",
     invalidPhone: "Phone number should only contain digits.",
@@ -93,7 +94,7 @@ I18n.translations = {
     editingMode: "You are in editing mode",
 
     // Settings Page
-    settings: "SETTINGS",
+    settingsTitle: "SETTINGS",
     enableNotifications: "Enable Notifications",
     enableVibration: "Enable Vibration",
     contactPreferences: "Contact Preferences",
@@ -103,6 +104,9 @@ I18n.translations = {
     goBack: "Go Back",
     hintText:
       "Choose how you prefer to be contacted in case of loss: by email or phone.",
+    notificationPermissionDenied: "Permission denied to show notifications.",
+    notificationsActivated: "Notifications have been activated.",
+    permissionsDenied: "Permission Denied",
   },
   fr: {
     // Tab
@@ -183,6 +187,7 @@ I18n.translations = {
     enterEmail: "Entrez votre email",
     enterPhone: "Entrez votre numéro de téléphone",
     historic: "Historique",
+    settings: "Paramètres",
     error: "Erreur",
     invalidEmail: "Format de l'adresse email invalide.",
     invalidPhone:
@@ -196,7 +201,7 @@ I18n.translations = {
     editingMode: "Vous êtes en mode édition",
 
     // Settings Page
-    settings: "PARAMÈTRES",
+    settingsTitle: "PARAMÈTRES",
     enableNotifications: "Activer les notifications",
     enableVibration: "Activer la vibration",
     contactPreferences: "Préférences de contact",
@@ -206,6 +211,10 @@ I18n.translations = {
     goBack: "Retour",
     hintText:
       "Choisissez comment vous préférez être contacté(e) en cas de perte : par email ou téléphone.",
+    notificationPermissionDenied:
+      "Permission refusée pour afficher les notifications.",
+    notificationsActivated: "Les notifications ont été activées.",
+    permissionsDenied: "Permission refusée",
   },
   es: {
     // Tab
@@ -287,7 +296,7 @@ I18n.translations = {
     enterEmail: "Introduce tu correo electrónico",
     enterPhone: "Introduce tu número de teléfono",
     historic: "Historial",
-    settings: "Configuraciones",
+    settings: "Ajustes",
     error: "Error",
     invalidEmail: "Formato de correo electrónico inválido.",
     invalidPhone: "El número de teléfono solo debe contener dígitos.",
@@ -300,7 +309,7 @@ I18n.translations = {
     editingMode: "Estás en modo de edición",
 
     // Settings Page
-    settings: "AJUSTES",
+    settingsTitle: "AJUSTES",
     enableNotifications: "Activar notificaciones",
     enableVibration: "Activar vibración",
     contactPreferences: "Preferencias de contacto",
@@ -310,6 +319,10 @@ I18n.translations = {
     goBack: "Volver",
     hintText:
       "Elija cómo prefiere ser contactado en caso de pérdida: por correo electrónico o teléfono.",
+    notificationPermissionDenied:
+      "Permiso denegado para mostrar notificaciones.",
+    notificationsActivated: "Las notificaciones han sido activadas",
+    permissionsDenied: "Permiso denegado",
   },
   de: {
     // Tab
@@ -403,7 +416,7 @@ I18n.translations = {
     editingMode: "Sie befinden sich im Bearbeitungsmodus",
 
     // Settings Page
-    settings: "EINSTELLUNGEN",
+    settingsTitle: "EINSTELLUNGEN",
     enableNotifications: "Benachrichtigungen aktivieren",
     enableVibration: "Vibration aktivieren",
     contactPreferences: "Kontaktpräferenzen",
@@ -413,6 +426,10 @@ I18n.translations = {
     goBack: "Zurück",
     hintText:
       "Wählen Sie, wie Sie im Verlustfall kontaktiert werden möchten: per E-Mail oder Telefon.",
+    notificationPermissionDenied:
+      "Berechtigung verweigert, um Benachrichtigungen anzuzeigen.",
+    notificationsActivated: "Benachrichtigungen wurden aktiviert.",
+    permissionsDenied: "Berechtigung verweigert",
   },
   it: {
     // Tab
@@ -506,7 +523,7 @@ I18n.translations = {
     editingMode: "Sei in modalità di modifica",
 
     // Settings Page
-    settings: "IMPOSTAZIONI",
+    settingsTitle: "IMPOSTAZIONI",
     enableNotifications: "Attiva notifiche",
     enableVibration: "Attiva vibrazione",
     contactPreferences: "Preferenze di contatto",
@@ -516,6 +533,10 @@ I18n.translations = {
     goBack: "Torna indietro",
     hintText:
       "Scegli come preferisci essere contattato in caso di smarrimento: tramite email o telefono.",
+    notificationPermissionDenied:
+      "Autorizzazione negata per visualizzare le notifiche.",
+    notificationsActivated: "Le notifiche sono state attivate.",
+    permissionsDenied: "Autorizzazione negata",
   },
 };
 

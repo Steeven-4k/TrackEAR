@@ -32,9 +32,9 @@ export default function ProfilePage() {
   }); // Backup of data to restore if edits are canceled
 
   // States for input validation errors
-  const [nameError, setNameError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
-  const [phoneError, setPhoneError] = useState(false);
+  const [nameError, setNameError] = useState<string | boolean>(false);
+  const [emailError, setEmailError] = useState<string | boolean>(false);
+  const [phoneError, setPhoneError] = useState<string | boolean>(false);
 
   // Validation functions for email and phone number inputs
   const validateEmail = (email: string): boolean =>
@@ -72,42 +72,49 @@ export default function ProfilePage() {
     }
   };
 
-  // Handle saving changes
+  // Function to handle form validation and saving
   const handleSave = async () => {
     let hasError = false;
 
-    // Validate all inputs and set errors if invalid
-    if (!validateEmail(email)) {
-      setEmailError(true);
-      hasError = true;
-    } else {
-      setEmailError(false);
-    }
-
-    if (!validatePhoneNumber(phone)) {
-      setPhoneError(true);
-      hasError = true;
-    } else {
-      setPhoneError(false);
-    }
-
+    // Validate name field
     if (!name.trim()) {
-      setNameError(true);
+      setNameError(i18n.t("nameRequired"));
       hasError = true;
     } else {
       setNameError(false);
     }
 
-    // Show error message if validation fails
+    // Validate email field
+    if (!email.trim()) {
+      setEmailError(i18n.t("emailRequired"));
+      hasError = true;
+    } else if (!validateEmail(email)) {
+      setEmailError(i18n.t("invalidEmail"));
+      hasError = true;
+    } else {
+      setEmailError(false);
+    }
+
+    // Validate phone number field
+    if (!phone.trim()) {
+      setPhoneError(i18n.t("phoneRequired"));
+      hasError = true;
+    } else if (!validatePhoneNumber(phone)) {
+      setPhoneError(i18n.t("invalidPhone"));
+      hasError = true;
+    } else {
+      setPhoneError(false);
+    }
+
     if (hasError) {
       Alert.alert(i18n.t("error"), i18n.t("allFieldsRequired"));
       return;
     }
 
-    await saveProfileData(); // Save changes
-    setOriginalData({ name, email, phone, avatar }); // Update backup
-    setIsEditing(false); // Exit editing mode
-    Alert.alert(i18n.t("saveChanges"), i18n.t("profileUpdated"));
+    await saveProfileData();
+    setOriginalData({ name, email, phone, avatar });
+    setIsEditing(false);
+    Alert.alert(i18n.t("success"), i18n.t("profileUpdated"));
   };
 
   // Open the image picker to select an avatar
@@ -150,14 +157,14 @@ export default function ProfilePage() {
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
-          {/* Indicateur de mode édition */}
+          {/* Edit Mode Indicator */}
           {isEditing && (
             <View style={styles.editIndicatorContainer}>
               <Text style={styles.editIndicator}>{i18n.t("editingMode")}</Text>
             </View>
           )}
 
-          {/* Avatar section */}
+          {/* Avatar Section */}
           <View style={styles.avatarSection}>
             <TouchableOpacity onPress={pickImage}>
               <Image
@@ -184,7 +191,7 @@ export default function ProfilePage() {
             )}
           </View>
 
-          {/* Name section */}
+          {/* Name Section */}
           {isEditing ? (
             <>
               <TextInput
@@ -200,11 +207,12 @@ export default function ProfilePage() {
                 }}
                 placeholder={i18n.t("enterName")}
                 placeholderTextColor="#888"
+                returnKeyType="done"
                 maxLength={30}
               />
-              {nameError && (
-                <Text style={styles.errorText}>{i18n.t("nameRequired")}</Text>
-              )}
+              {nameError ? (
+                <Text style={styles.errorText}>{nameError}</Text>
+              ) : null}
             </>
           ) : (
             <Text style={styles.name}>{name}</Text>
@@ -230,6 +238,7 @@ export default function ProfilePage() {
                     placeholder={i18n.t("enterEmail")}
                     placeholderTextColor="#888"
                     keyboardType="email-address"
+                    returnKeyType="done"
                     maxLength={50}
                   />
                 </>
@@ -244,9 +253,9 @@ export default function ProfilePage() {
               )}
             </View>
             <>
-              {emailError && (
-                <Text style={styles.errorText}>{i18n.t("invalidEmail")}</Text>
-              )}
+              {emailError ? (
+                <Text style={styles.errorText}>{emailError}</Text>
+              ) : null}
             </>
 
             {/* Phone Section */}
@@ -267,7 +276,8 @@ export default function ProfilePage() {
                     }}
                     placeholder={i18n.t("enterPhone")}
                     placeholderTextColor="#888"
-                    keyboardType="phone-pad"
+                    keyboardType="number-pad"
+                    returnKeyType="done"
                     maxLength={10}
                   />
                 </>
@@ -282,13 +292,13 @@ export default function ProfilePage() {
               )}
             </View>
             <>
-              {phoneError && (
-                <Text style={styles.errorText}>{i18n.t("invalidPhone")}</Text>
-              )}
+              {phoneError ? (
+                <Text style={styles.errorText}>{phoneError}</Text>
+              ) : null}
             </>
           </View>
 
-          {/* Buttons section */}
+          {/* Buttons Section */}
           {!isEditing && (
             <View style={styles.actionSection}>
               <TouchableOpacity style={styles.actionButton}>
