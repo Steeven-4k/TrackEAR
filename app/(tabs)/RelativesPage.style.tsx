@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, StyleSheet, Platform } from "react-native";
 
 // Get device screen width and height
 const { width, height } = Dimensions.get("window");
@@ -17,17 +17,20 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    fontSize: width * 0.06,
+    fontSize: width * 0.07,
     fontWeight: "bold",
-    marginBottom: height * 0.01,
+    textAlign: "center",
+    marginTop: height * 0.02,
+    marginBottom: height * 0.02,
   },
   subtitle: {
     fontSize: width * 0.04,
     color: "#555",
     marginBottom: height * 0.02,
+    textAlign: "center",
   },
   listSubtitle: {
-    fontSize: width * 0.045,
+    fontSize: width * 0.06,
     fontWeight: "bold",
     marginVertical: height * 0.015,
   },
@@ -53,9 +56,12 @@ export const styles = StyleSheet.create({
   },
   addContainer: {
     backgroundColor: "#F8E7E4",
-    padding: width * 0.05,
+    paddingHorizontal: width * 0.05,
+    paddingVertical: height * 0.01,
+    paddingBottom: Platform.OS === "ios" ? height * 0.03 : height * 0.03,
     borderRadius: width * 0.03,
     marginVertical: height * 0.015,
+    marginTop: Platform.OS === "ios" ? height * 0.025 : height * 0.1,
   },
   addButton: {
     backgroundColor: "#D6EAF8",
@@ -66,11 +72,12 @@ export const styles = StyleSheet.create({
   },
   addButtonText: {
     color: "#333",
-    fontSize: width * 0.045,
+    fontSize: width * 0.05,
     fontWeight: "bold",
   },
   listContainer: {
     flex: 1,
+    width: "100%",
   },
   relativeItem: {
     flexDirection: "row",
@@ -80,10 +87,13 @@ export const styles = StyleSheet.create({
     padding: width * 0.04,
     borderRadius: width * 0.02,
     marginBottom: height * 0.015,
+    borderWidth: 1,
+    borderColor: "#DDD",
   },
   relativeName: {
     fontSize: width * 0.045,
     fontWeight: "bold",
+    maxWidth: "50%",
   },
   buttonGroup: {
     flexDirection: "row",
@@ -101,6 +111,8 @@ export const styles = StyleSheet.create({
   },
   deleteButton: {
     backgroundColor: "#E74C3C",
+    paddingHorizontal: width * 0.03,
+    paddingVertical: width * 0.02,
   },
   inputError: {
     borderColor: "#F44336",
@@ -109,7 +121,6 @@ export const styles = StyleSheet.create({
   errorText: {
     color: "red",
     fontSize: width * 0.035,
-    marginTop: height * 0.01,
     marginBottom: height * 0.01,
     textAlign: "center",
     width: "100%",

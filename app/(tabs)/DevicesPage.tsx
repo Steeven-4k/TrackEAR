@@ -15,6 +15,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BleManager } from "react-native-ble-plx";
 import I18n from "../../constants/i18n";
 import { styles } from "./DevicesPages.style";
+import { Buffer } from "buffer";
+import BackgroundTimer from "react-native-background-timer";
+import * as Notifications from "expo-notifications";
+import * as Location from "expo-location";
 
 // Initialize BLE manager
 const manager = new BleManager();
@@ -24,6 +28,136 @@ const DevicesPage = () => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+  const [aidLost, setAidLost] = useState<boolean | null>(null);
+
+  // Ajout d'un effet pour démarrer la récupération en arrière-plan
+  useEffect(() => {
+    const startBackgroundTask = async () => {
+      BackgroundTimer.runBackgroundTimer(async () => {
+        if (connectedDevice) {
+          await monitorDeviceUID(connectedDevice);
+        }
+      }, 5000); // Exécuter toutes les 5 secondes
+    };
+
+    startBackgroundTask();
+
+    return () => {
+      BackgroundTimer.stopBackgroundTimer();
+    };
+  }, [connectedDevice]);
+
+  // Fonction pour surveiller l'UID du microcontrôleur
+  const monitorDeviceUID = async (device) => {
+    try {
+      if (!device.isConnected) {
+        console.warn("L'appareil n'est plus connecté.");
+        return;
+      }
+
+      const services = await device.services();
+      for (const service of services) {
+        const characteristics = await service.characteristics();
+        for (const char of characteristics) {
+          if (
+            char.uuid === "12345678-1234-5678-1234-56789abcdef1" &&
+            char.isReadable
+          ) {
+            const charValue = await char.read();
+            if (charValue.value) {
+              const boolValue =
+                Buffer.from(charValue.value, "base64").readUInt8(0) === 1;
+              setAidLost(boolValue);
+              console.log("Valeur de l'UID récupérée :", boolValue);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.warn(
+        "Erreur lors de la lecture de l'UID en arrière-plan :",
+        error
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (!connectedDevice) {
+      BackgroundTimer.stopBackgroundTimer();
+    }
+  }, [connectedDevice]);
+
+  // Fonction pour obtenir l'heure actuelle formatée
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+  // Configuration des notifications
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+
+  let notificationSent = false; // Variable globale pour suivre l'état de la notification
+  // Fonction pour envoyer une notification avec localisation et heure
+  const sendNotificationWithDetails = async (location) => {
+    const currentTime = getCurrentTime();
+    const locationText = `Latitude: ${location.latitude.toFixed(
+      5
+    )}, Longitude: ${location.longitude.toFixed(5)}`;
+
+    // Enregistrement de la localisation actuelle dans AsyncStorage
+    await AsyncStorage.setItem("lastKnownLocation", JSON.stringify(location));
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Prothèse Perdue !",
+        body: `Perte détectée à ${currentTime} - ${locationText}`,
+      },
+      trigger: null, // Notification immédiate
+    });
+
+    notificationSent = true; // Marquer la notification comme envoyée
+  };
+
+  // Vérifier si la prothèse est perdue et envoyer une seule notification
+  useEffect(() => {
+    const checkAidLost = async () => {
+      const storedValue = await AsyncStorage.getItem("aidLost");
+      const lastNotification = await AsyncStorage.getItem(
+        "lastNotificationSent"
+      );
+
+      if (storedValue === "true" && !lastNotification) {
+        const location = await Location.getCurrentPositionAsync({});
+        const userLocation = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        };
+
+        // Envoi de la notification
+        await sendNotificationWithDetails(userLocation);
+
+        // Marquer la notification comme envoyée
+        await AsyncStorage.setItem("lastNotificationSent", "true");
+      } else if (storedValue !== "true") {
+        // Réinitialiser lorsque la prothèse est retrouvée
+        await AsyncStorage.removeItem("lastNotificationSent");
+      }
+    };
+
+    const interval = setInterval(checkAidLost, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Load stored device and request permissions for Android
   useEffect(() => {
@@ -73,6 +207,9 @@ const DevicesPage = () => {
           I18n.t("connected"),
           `${I18n.t("connectedTo")} ${device.name}`
         );
+
+        // Start reading aidLost status periodically
+        startAidLostMonitor(device);
       }
     } catch (error) {
       console.error("Failed to load stored device:", error);
@@ -129,21 +266,57 @@ const DevicesPage = () => {
         I18n.t("connected"),
         I18n.t("connectedTo") + " " + device.name
       );
-
-      console.log("Connected to device:", device.name);
-
-      // Discover services and characteristics
-      const services = await connected.services();
-      services.forEach(async (service) => {
-        const characteristics = await service.characteristics();
-        characteristics.forEach((char) => {
-          console.log("Found characteristic:" + " " + char.uuid);
-        });
-      });
+      startAidLostMonitor(connected);
     } catch (error) {
       console.error("Connection error:", error);
       Alert.alert(I18n.t("error"), I18n.t("connectionFailed"));
     }
+  };
+
+  const startAidLostMonitor = (device: Device) => {
+    let lastStoredValue = null; // Stocke la dernière valeur pour éviter les doublons
+
+    const monitorInterval = setInterval(async () => {
+      try {
+        if (!device.isConnected) {
+          console.warn("Device not connected. Stopping monitoring.");
+          clearInterval(monitorInterval);
+          return;
+        }
+
+        const services = await device.services();
+        for (const service of services) {
+          const characteristics = await service.characteristics();
+          for (const char of characteristics) {
+            if (
+              char.uuid === "12345678-1234-5678-1234-56789abcdef1" &&
+              char.isReadable
+            ) {
+              const charValue = await char.read();
+              if (charValue.value) {
+                const boolValue =
+                  Buffer.from(charValue.value, "base64").readUInt8(0) === 1;
+
+                // Vérifier si la valeur a changé avant de l'enregistrer et l'afficher
+                if (boolValue !== lastStoredValue) {
+                  lastStoredValue = boolValue;
+                  setAidLost(boolValue);
+                  await AsyncStorage.setItem(
+                    "aidLost",
+                    JSON.stringify(boolValue)
+                  );
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.warn(
+          "Error reading aidLost characteristic or device disconnected.",
+          error
+        );
+      }
+    }, 5000);
   };
 
   // Function to disconnect from a BLE device

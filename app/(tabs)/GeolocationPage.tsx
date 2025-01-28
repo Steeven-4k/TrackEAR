@@ -17,6 +17,33 @@ import i18n from "@/constants/i18n";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function GeolocationPage() {
+  // Suivre la valeur stockée de aidLost et mettre à jour la position du marqueur
+  useEffect(() => {
+    const updateHearingAidLocation = async () => {
+      const aidLost = await AsyncStorage.getItem("aidLost");
+
+      if (aidLost === "true") {
+        const storedLocation = await AsyncStorage.getItem("lastKnownLocation");
+        if (storedLocation) {
+          const { latitude, longitude } = JSON.parse(storedLocation);
+
+          setHearingAids((prevHearingAids) =>
+            prevHearingAids.map((aid) =>
+              aid.id === 1 &&
+              (aid.latitude !== latitude || aid.longitude !== longitude)
+                ? { ...aid, latitude, longitude }
+                : aid
+            )
+          );
+        }
+      }
+    };
+
+    const interval = setInterval(updateHearingAidLocation, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   // State for storing user's current location coordinates
   const [currentLocation, setCurrentLocation] = useState({
     latitude: 48.8566,
@@ -81,7 +108,7 @@ export default function GeolocationPage() {
 
   // Load data on component mount and get the user's current location
   useEffect(() => {
-    loadLocationData();
+    //loadLocationData();
     getCurrentLocation();
   }, []);
 
