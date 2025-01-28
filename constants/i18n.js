@@ -90,6 +90,10 @@ I18n.translations = {
       "Unable to reconnect to your device. Please check your Bluetooth connection.",
     permissionsDenied:
       "Bluetooth permissions were denied. Please enable them in settings.",
+    aidLostNotificationTitle: "Hearing Aid Lost!",
+    aidLostDetected: "Loss detected at",
+    latitude: "Latitude",
+    longitude: "Longitude",
 
     // Profile Page
     email: "Email",
@@ -97,7 +101,7 @@ I18n.translations = {
     enterName: "Enter your name",
     enterEmail: "Enter your email",
     enterPhone: "Enter your phone number",
-    historic: "Historic",
+    historic: "History",
     settings: "Settings",
     error: "Error",
     invalidEmail: "Invalid email format.",
@@ -108,6 +112,14 @@ I18n.translations = {
     permissionDenied: "Permission denied to access the image library.",
     nameRequired: "Name is required.",
     editingMode: "You are in editing mode",
+
+    // History Page
+    historyPageTitle: "Notification History",
+    deleteNotification: "Delete",
+    deleteConfirmation: "Do you really want to delete this notification?",
+    clearAllNotifications: "Clear All Notifications",
+    clearAllConfirmation: "Do you really want to delete all notifications?",
+    noNotifications: "No notifications available.",
 
     // Settings Page
     settingsTitle: "SETTINGS",
@@ -211,6 +223,10 @@ I18n.translations = {
       "Impossible de se reconnecter à votre appareil. Veuillez vérifier votre connexion Bluetooth.",
     permissionsDenied:
       "Les autorisations Bluetooth ont été refusées. Veuillez les activer dans les paramètres.",
+    aidLostNotificationTitle: "Prothèse Perdue !",
+    aidLostDetected: "Perte détectée à",
+    latitude: "Latitude",
+    longitude: "Longitude",
 
     // Profile Page
     email: "Email",
@@ -231,6 +247,15 @@ I18n.translations = {
       "Permission refusée pour accéder à la bibliothèque d'images.",
     nameRequired: "Le nom est requis.",
     editingMode: "Vous êtes en mode édition",
+
+    // History Page
+    historyPageTitle: "Historique des Notifications",
+    deleteNotification: "Supprimer",
+    deleteConfirmation: "Voulez-vous vraiment supprimer cette notification ?",
+    clearAllNotifications: "Tout supprimer",
+    clearAllConfirmation:
+      "Voulez-vous vraiment supprimer toutes les notifications ?",
+    noNotifications: "Aucune notification disponible.",
 
     // Settings Page
     settingsTitle: "PARAMÈTRES",
@@ -336,6 +361,10 @@ I18n.translations = {
       "No se puede volver a conectar con su dispositivo. Por favor, verifique su conexión Bluetooth.",
     permissionsDenied:
       "Se denegaron los permisos de Bluetooth. Habilítelos en la configuración.",
+    aidLostNotificationTitle: "¡Audífono Perdido!",
+    aidLostDetected: "Pérdida detectada a las",
+    latitude: "Latitud",
+    longitude: "Longitud",
 
     // Profile Page
     email: "Correo electrónico",
@@ -355,6 +384,15 @@ I18n.translations = {
     permissionDenied:
       "Permiso denegado para acceder a la biblioteca de imágenes.",
     editingMode: "Estás en modo de edición",
+
+    // History Page
+    historyPageTitle: "Historial de Notificaciones",
+    deleteNotification: "Eliminar",
+    deleteConfirmation: "¿Realmente deseas eliminar esta notificación?",
+    clearAllNotifications: "Eliminar todo",
+    clearAllConfirmation:
+      "¿Realmente deseas eliminar todas las notificaciones?",
+    noNotifications: "No hay notificaciones disponibles.",
 
     // Settings Page
     settingsTitle: "AJUSTES",
@@ -461,6 +499,10 @@ I18n.translations = {
       "Es kann keine Verbindung zu Ihrem Gerät hergestellt werden. Bitte überprüfen Sie Ihre Bluetooth-Verbindung.",
     permissionsDenied:
       "Bluetooth-Berechtigungen wurden verweigert. Bitte aktivieren Sie sie in den Einstellungen.",
+    aidLostNotificationTitle: "Hörgerät verloren!",
+    aidLostDetected: "Verlust festgestellt um",
+    latitude: "Breite",
+    longitude: "Länge",
 
     // Profile Page
     email: "E-Mail",
@@ -479,6 +521,15 @@ I18n.translations = {
     profileUpdated: "Profil erfolgreich aktualisiert!",
     permissionDenied: "Zugriff auf die Bilderbibliothek verweigert.",
     editingMode: "Sie befinden sich im Bearbeitungsmodus",
+
+    // History Page
+    historyPageTitle: "Benachrichtigungsverlauf",
+    deleteNotification: "Löschen",
+    deleteConfirmation: "Möchten Sie diese Benachrichtigung wirklich löschen?",
+    clearAllNotifications: "Alles löschen",
+    clearAllConfirmation:
+      "Möchten Sie wirklich alle Benachrichtigungen löschen?",
+    noNotifications: "Keine Benachrichtigungen verfügbar.",
 
     // Settings Page
     settingsTitle: "EINSTELLUNGEN",
@@ -584,6 +635,10 @@ I18n.translations = {
       "Impossibile riconnettersi al dispositivo. Controlla la tua connessione Bluetooth.",
     permissionsDenied:
       "Le autorizzazioni Bluetooth sono state negate. Abilitarle nelle impostazioni.",
+    aidLostNotificationTitle: "Apparecchio acustico perso!",
+    aidLostDetected: "Perdita rilevata alle",
+    latitude: "Latitudine",
+    longitude: "Longitudine",
 
     // Profile Page
     email: "Email",
@@ -602,6 +657,14 @@ I18n.translations = {
     profileUpdated: "Profilo aggiornato con successo!",
     permissionDenied: "Permesso negato per accedere alla libreria di immagini.",
     editingMode: "Sei in modalità di modifica",
+
+    // History Page
+    historyPageTitle: "Storico delle Notifiche",
+    deleteNotification: "Elimina",
+    deleteConfirmation: "Vuoi davvero eliminare questa notifica?",
+    clearAllNotifications: "Elimina tutto",
+    clearAllConfirmation: "Vuoi davvero eliminare tutte le notifiche?",
+    noNotifications: "Nessuna notifica disponibile.",
 
     // Settings Page
     settingsTitle: "IMPOSTAZIONI",

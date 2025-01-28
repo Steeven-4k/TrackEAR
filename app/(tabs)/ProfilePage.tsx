@@ -301,12 +301,15 @@ export default function ProfilePage() {
           {/* Buttons Section */}
           {!isEditing && (
             <View style={styles.actionSection}>
-              <TouchableOpacity style={styles.actionButton}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => router.push("/HistoryPage")}
+              >
                 <Text style={styles.actionText}>{i18n.t("historic")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.actionButton}
-                onPress={() => router.push("/SettingsPage")} // Go to Settings Page
+                onPress={() => router.push("/SettingsPage")}
               >
                 <Text style={styles.actionText}>{i18n.t("settings")}</Text>
               </TouchableOpacity>

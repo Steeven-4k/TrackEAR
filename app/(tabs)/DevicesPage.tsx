@@ -107,25 +107,48 @@ const DevicesPage = () => {
   });
 
   let notificationSent = false; // Variable globale pour suivre l'état de la notification
+
   // Fonction pour envoyer une notification avec localisation et heure
   const sendNotificationWithDetails = async (location) => {
     const currentTime = getCurrentTime();
-    const locationText = `Latitude: ${location.latitude.toFixed(
-      5
-    )}, Longitude: ${location.longitude.toFixed(5)}`;
+    const notificationData = {
+      timestamp: currentTime,
+      latitude: location.latitude.toFixed(5),
+      longitude: location.longitude.toFixed(5),
+    };
 
-    // Enregistrement de la localisation actuelle dans AsyncStorage
-    await AsyncStorage.setItem("lastKnownLocation", JSON.stringify(location));
+    // Récupérer les anciennes notifications
+    const storedNotifications = await AsyncStorage.getItem("notifications");
+    const notificationsArray = storedNotifications
+      ? JSON.parse(storedNotifications)
+      : [];
 
+    // Ajouter la nouvelle notification
+    notificationsArray.unshift(notificationData);
+
+    // Limiter l'historique à 20 notifications maximum
+    if (notificationsArray.length > 20) {
+      notificationsArray.pop();
+    }
+
+    // Sauvegarder dans AsyncStorage
+    await AsyncStorage.setItem(
+      "notifications",
+      JSON.stringify(notificationsArray)
+    );
+
+    // Envoyer la notification (toujours dans la langue actuelle)
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: "Prothèse Perdue !",
-        body: `Perte détectée à ${currentTime} - ${locationText}`,
+        title: I18n.t("aidLostNotificationTitle"),
+        body: `${I18n.t("aidLostDetected")} ${currentTime} - ${I18n.t(
+          "latitude"
+        )}: ${notificationData.latitude}, ${I18n.t("longitude")}: ${
+          notificationData.longitude
+        }`,
       },
       trigger: null, // Notification immédiate
     });
-
-    notificationSent = true; // Marquer la notification comme envoyée
   };
 
   // Vérifier si la prothèse est perdue et envoyer une seule notification
@@ -349,6 +372,62 @@ const DevicesPage = () => {
       );
     }
   };
+
+  // Reconnexion automatique en cas de connexion perdue avec la prothèse auditive
+  useEffect(() => {
+    const reconnectDevice = async () => {
+      const storedDeviceId = await AsyncStorage.getItem("connectedDevice");
+      if (storedDeviceId && !connectedDevice) {
+        try {
+          const device = await manager.connectToDevice(storedDeviceId);
+          setConnectedDevice(device);
+          console.log("Reconnecté à l'appareil:", device.name);
+        } catch (error) {
+          console.warn("Échec de la reconnexion:", error);
+        }
+      }
+    };
+
+    reconnectDevice();
+
+    const subscription = connectedDevice
+      ? manager.onDeviceDisconnected(connectedDevice.id, reconnectDevice)
+      : null;
+
+    return () => subscription?.remove();
+  }, [connectedDevice]);
+
+  // Mise à jour régulière de l'AsyncStorage en évitant les incohérences entre l'état stocké et l'état réel
+  useEffect(() => {
+    const monitorConnection = setInterval(async () => {
+      if (connectedDevice) {
+        const isConnected = await connectedDevice.isConnected();
+        if (!isConnected) {
+          setConnectedDevice(null);
+          await AsyncStorage.removeItem("connectedDevice");
+          console.warn("Connexion perdue. Mise à jour de l'état.");
+        }
+      }
+    }, 5000); // Vérification toutes les 5 secondes
+
+    return () => clearInterval(monitorConnection);
+  }, [connectedDevice]);
+
+  // Redécouverte des services et caractéristiques lors de la reconnexion de la prothèse auditive
+  const discoverDeviceServices = async (device) => {
+    try {
+      const services = await device.discoverAllServicesAndCharacteristics();
+      console.log("Services découverts:", services);
+    } catch (error) {
+      console.error("Erreur lors de la découverte des services:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (connectedDevice) {
+      discoverDeviceServices(connectedDevice);
+    }
+  }, [connectedDevice]);
 
   return (
     <SafeAreaProvider>

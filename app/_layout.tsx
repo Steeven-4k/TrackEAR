@@ -47,13 +47,19 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
-        {/* Onglets principaux */}
+        {/* Main Pages */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
         {/* Page Settings */}
         <Stack.Screen
           name="SettingsPage"
-          options={{ title: "Settings", headerShown: false }}
+          options={{ title: i18n.t("settings"), headerShown: false }}
+        />
+
+        {/* Page History */}
+        <Stack.Screen
+          name="HistoryPage"
+          options={{ title: i18n.t("historic"), headerShown: true }}
         />
         {/* Page Not Found */}
         <Stack.Screen name="+not-found" />
