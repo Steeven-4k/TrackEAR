@@ -110,6 +110,15 @@ const DevicesPage = () => {
 
   // Fonction pour envoyer une notification avec localisation et heure
   const sendNotificationWithDetails = async (location) => {
+    // Vérifie que les notifications sont activées dans les paramètres de l'application
+    const notificationsSetting = await AsyncStorage.getItem(
+      "notificationsEnabled"
+    );
+    if (notificationsSetting !== "true") {
+      console.log("Notifications désactivées, envoi annulé.");
+      return;
+    }
+
     const currentTime = getCurrentTime();
     const notificationData = {
       timestamp: currentTime,
@@ -154,6 +163,15 @@ const DevicesPage = () => {
   // Vérifier si la prothèse est perdue et envoyer une seule notification
   useEffect(() => {
     const checkAidLost = async () => {
+      // N'envoie pas de notifications si les paramètres sont désactivés dans l'application
+      const notificationsSetting = await AsyncStorage.getItem(
+        "notificationsEnabled"
+      );
+      if (notificationsSetting !== "true") {
+        console.log("Notifications désactivées, vérification annulée.");
+        return;
+      }
+
       const storedValue = await AsyncStorage.getItem("aidLost");
       const lastNotification = await AsyncStorage.getItem(
         "lastNotificationSent"
@@ -297,7 +315,8 @@ const DevicesPage = () => {
   };
 
   const startAidLostMonitor = (device: Device) => {
-    let lastStoredValue = null; // Stocke la dernière valeur pour éviter les doublons
+    let lastStoredAidLost = null;
+    let lastStoredDoubleValue = null;
 
     const monitorInterval = setInterval(async () => {
       try {
@@ -311,6 +330,7 @@ const DevicesPage = () => {
         for (const service of services) {
           const characteristics = await service.characteristics();
           for (const char of characteristics) {
+            // Lecture de la caractéristique aidLost (booléen)
             if (
               char.uuid === "12345678-1234-5678-1234-56789abcdef1" &&
               char.isReadable
@@ -320,13 +340,46 @@ const DevicesPage = () => {
                 const boolValue =
                   Buffer.from(charValue.value, "base64").readUInt8(0) === 1;
 
-                // Vérifier si la valeur a changé avant de l'enregistrer et l'afficher
-                if (boolValue !== lastStoredValue) {
-                  lastStoredValue = boolValue;
+                if (boolValue !== lastStoredAidLost) {
+                  lastStoredAidLost = boolValue;
                   setAidLost(boolValue);
+                  console.log("🔹 Valeur aidLost récupérée :", boolValue);
                   await AsyncStorage.setItem(
                     "aidLost",
                     JSON.stringify(boolValue)
+                  );
+                }
+              }
+            }
+
+            // Lecture de la caractéristique double
+            if (
+              char.uuid === "12345678-1234-5678-1234-56789abcdef2" &&
+              char.isReadable
+            ) {
+              const charValue = await char.read();
+              if (charValue.value) {
+                const buffer = Buffer.from(charValue.value, "base64");
+
+                // Vérifie si le buffer a bien une taille suffisante pour un double (8 octets)
+                if (buffer.length >= 8) {
+                  const doubleValue = buffer.readDoubleLE(0); // Lecture correcte d'un double
+
+                  if (doubleValue !== lastStoredDoubleValue) {
+                    lastStoredDoubleValue = doubleValue;
+                    console.log(
+                      "🔹 Valeur de l'UID double récupérée :",
+                      doubleValue
+                    );
+                    await AsyncStorage.setItem(
+                      "doubleValue",
+                      JSON.stringify(doubleValue)
+                    );
+                  }
+                } else {
+                  console.warn(
+                    "⚠️ Taille du buffer insuffisante pour un double :",
+                    buffer.length
                   );
                 }
               }
@@ -335,7 +388,7 @@ const DevicesPage = () => {
         }
       } catch (error) {
         console.warn(
-          "Error reading aidLost characteristic or device disconnected.",
+          "❌ Erreur lors de la lecture des caractéristiques :",
           error
         );
       }

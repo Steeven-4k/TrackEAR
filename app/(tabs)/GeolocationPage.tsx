@@ -17,44 +17,26 @@ import i18n from "@/constants/i18n";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function GeolocationPage() {
-  // Suivre la valeur stockée de aidLost et mettre à jour la position du marqueur
-  useEffect(() => {
-    const updateHearingAidLocation = async () => {
-      const aidLost = await AsyncStorage.getItem("aidLost");
+  /* ##########################################################
+   ###########    STATES & GLOBAL VARIABLES   ##############
+   ########################################################## */
 
-      if (aidLost === "true") {
-        const storedLocation = await AsyncStorage.getItem("lastKnownLocation");
-        if (storedLocation) {
-          const { latitude, longitude } = JSON.parse(storedLocation);
-
-          setHearingAids((prevHearingAids) =>
-            prevHearingAids.map((aid) =>
-              aid.id === 1 &&
-              (aid.latitude !== latitude || aid.longitude !== longitude)
-                ? { ...aid, latitude, longitude }
-                : aid
-            )
-          );
-        }
-      }
-    };
-
-    const interval = setInterval(updateHearingAidLocation, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
+  // Type definition for hearing aids
+  type HearingAid = {
+    id: number;
+    latitude: number;
+    longitude: number;
+    title: string;
+  };
 
   // State for storing user's current location coordinates
-  const [currentLocation, setCurrentLocation] = useState({
-    latitude: 48.8566,
-    longitude: 2.3522,
-  });
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
 
   // State to store a list of predefined hearing aid locations
-  const [hearingAids, setHearingAids] = useState([
-    { id: 1, latitude: 48.857, longitude: 2.3525, title: "hearingAid1" },
-    { id: 2, latitude: 48.858, longitude: 2.353, title: "hearingAid2" },
-  ]);
+  const [hearingAids, setHearingAids] = useState<HearingAid[]>([]);
 
   /// State for defining the map's visible region
   const [region, setRegion] = useState({
@@ -77,30 +59,60 @@ export default function GeolocationPage() {
   // State to track location permission status
   const [locationPermission, setLocationPermission] = useState(false);
 
-  // Function to save location data to AsyncStorage
-  const saveLocationData = async () => {
-    try {
-      const data = {
-        currentLocation,
-        hearingAids,
-      };
-      await AsyncStorage.setItem("geolocationData", JSON.stringify(data));
-    } catch (error) {
-      console.error("Failed to save geolocation data", error);
-    }
-  };
+  // Boolean state to indicate whether a hearing aid has been marked as lost
+  const [aidLost, setAidLost] = useState(false);
 
-  // Function to load saved location data from AsyncStorage
-  const loadLocationData = async () => {
+  // State to store the ID of the lost hearing aid
+  const [lostAidId, setLostAidId] = useState<number | null>(null);
+
+  // State to store the GPS coordinates of the last known location of the lost hearing aid
+  const [lostAidPosition, setLostAidPosition] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+
+  /* ##########################################################
+   ###############    LOCATION MANAGEMENT   #################
+   ########################################################## */
+
+  // Function to retrieve the current location
+  const getCurrentLocation = async () => {
     try {
-      const storedData = await AsyncStorage.getItem("geolocationData");
-      if (storedData) {
-        const { currentLocation, hearingAids } = JSON.parse(storedData);
-        setCurrentLocation(currentLocation);
-        setHearingAids(hearingAids);
+      const { status } = await Location.getForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setLocationPermission(false);
+        const { status: newStatus } =
+          await Location.requestForegroundPermissionsAsync();
+        if (newStatus !== "granted") {
+          setLocationPermission(false);
+          Alert.alert(
+            i18n.t("error"),
+            i18n.t("locationPermissionDenied"),
+            [
+              {
+                text: i18n.t("openSettings"),
+                onPress: () => Linking.openSettings(),
+              },
+            ],
+            { cancelable: false }
+          );
+          setLoading(false);
+          return;
+        }
       }
+      const location = await Location.getCurrentPositionAsync({});
+      setCurrentLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
     } catch (error) {
-      console.error("Failed to load geolocation data", error);
+      console.error("Error fetching location", error);
     } finally {
       setLoading(false);
     }
@@ -108,14 +120,197 @@ export default function GeolocationPage() {
 
   // Load data on component mount and get the user's current location
   useEffect(() => {
-    //loadLocationData();
     getCurrentLocation();
   }, []);
 
-  // Save location data whenever currentLocation or hearingAids change
+  // Update every 2s of the user’s marker
   useEffect(() => {
-    saveLocationData();
-  }, [currentLocation, hearingAids]);
+    let locationSubscription: Location.LocationSubscription | null = null;
+
+    const startLocationTracking = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setLocationPermission(false);
+        return;
+      }
+
+      setLocationPermission(true);
+
+      locationSubscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 2000, // Mettre à jour toutes les 2 secondes
+          distanceInterval: 1, // Optionnel : mise à jour si déplacement d'au moins 1 mètre
+        },
+        (location) => {
+          setCurrentLocation({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          });
+        }
+      );
+    };
+
+    startLocationTracking();
+
+    return () => {
+      if (locationSubscription) {
+        locationSubscription.remove();
+      }
+    };
+  }, []);
+
+  /* ##########################################################
+   ###########    HEARING AID POSITION MANAGEMENT   #########
+   ########################################################## */
+
+  // Setting of hearing aids' location, based on the user position
+  useEffect(() => {
+    if (currentLocation) {
+      setHearingAids([
+        {
+          id: 1,
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+          title: "hearingAid1",
+        },
+        {
+          id: 2,
+          latitude: currentLocation.latitude + 0.0001, // Décalage en latitude
+          longitude: currentLocation.longitude + 0.0001, // Décalage en longitude
+          title: "hearingAid2",
+        },
+      ]);
+    }
+  }, [currentLocation]);
+
+  // Focus the map on a selected hearing aid
+  const focusOnHearingAid = (aid: HearingAid) => {
+    setRegion({
+      latitude: aid.latitude,
+      longitude: aid.longitude,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    });
+  };
+
+  // Display a selection menu for hearing aids
+  const selectHearingAid = () => {
+    Alert.alert(i18n.t("selectHearingAid"), i18n.t("chooseAidToCenter"), [
+      ...hearingAids.map((aid) => ({
+        text: i18n.t(`hearingAid${aid.id}`),
+
+        onPress: () => focusOnHearingAid(aid),
+      })),
+      { text: i18n.t("cancel"), style: "cancel" },
+    ]);
+  };
+
+  // Freeze one of the hearing aid marker/position when it is considered as lost, the other continues to follow the user's position
+  useEffect(() => {
+    if (!currentLocation) return;
+
+    const updateHearingAidPosition = async () => {
+      const aidLostStatus = await AsyncStorage.getItem("aidLost");
+      const isAidLost = aidLostStatus === "true";
+      setAidLost(isAidLost);
+
+      let newLostPosition = lostAidPosition;
+
+      if (isAidLost && !newLostPosition) {
+        const savedPosition = await AsyncStorage.getItem("lostAidPosition");
+        if (savedPosition) {
+          newLostPosition = JSON.parse(savedPosition);
+        } else {
+          newLostPosition = {
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude,
+          };
+          AsyncStorage.setItem(
+            "lostAidPosition",
+            JSON.stringify(newLostPosition)
+          );
+        }
+        setLostAidPosition(newLostPosition);
+      }
+
+      // Immediate update of the hearing aid position
+      setHearingAids((prevHearingAids) =>
+        prevHearingAids.map((aid) => ({
+          ...aid,
+          latitude:
+            isAidLost && aid.id === 1
+              ? newLostPosition.latitude
+              : currentLocation.latitude + (aid.id === 2 ? 0.0001 : 0),
+          longitude:
+            isAidLost && aid.id === 1
+              ? newLostPosition.longitude
+              : currentLocation.longitude + (aid.id === 2 ? 0.0001 : 0),
+        }))
+      );
+    };
+
+    updateHearingAidPosition();
+    const interval = setInterval(updateHearingAidPosition, 2000);
+    return () => clearInterval(interval);
+  }, [currentLocation, lostAidPosition, aidLost]);
+
+  // Retrieve the last known position of the lost hearing aid & update the position in AsyncStorage
+  useEffect(() => {
+    const loadLostAidPosition = async () => {
+      const savedPosition = await AsyncStorage.getItem("lostAidPosition");
+      if (savedPosition) {
+        setLostAidPosition(JSON.parse(savedPosition));
+      }
+    };
+
+    if (aidLost) {
+      loadLostAidPosition();
+    }
+  }, [aidLost]);
+
+  // Set the hearing aid position back to the user's once it is found
+  const restoreLostAid = () => {
+    setAidLost(false);
+    setLostAidId(null);
+    setLostAidPosition(null);
+    AsyncStorage.removeItem("aidLost");
+    AsyncStorage.removeItem("lostAidPosition");
+
+    setHearingAids((prevHearingAids) =>
+      prevHearingAids.map((aid) => ({
+        ...aid,
+        latitude:
+          (currentLocation?.latitude ?? 0) + (aid.id === 2 ? 0.0001 : 0),
+        longitude:
+          (currentLocation?.longitude ?? 0) + (aid.id === 2 ? 0.0001 : 0),
+      }))
+    );
+  };
+
+  // Calculate distance between two coordinates (user position & hearing aid)
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ): string => {
+    const R = 6371; // Earth's radius in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return (R * c).toFixed(2); // Distance in km
+  };
+
+  /* ##########################################################
+   ###############    ORIENTATION & MAGNETOMETER   ##########
+   ########################################################## */
 
   // Compass subscription to track device orientation
   useEffect(() => {
@@ -127,6 +322,7 @@ export default function GeolocationPage() {
           if (angle < 0) {
             angle += 360;
           }
+          angle = (angle + 180) % 360; // Correction de l'inversion
           setHeading(angle);
         });
       }
@@ -171,114 +367,12 @@ export default function GeolocationPage() {
     return () => subscription.remove();
   }, []);
 
-  // Refresh the page whenever it is revisited
-  useFocusEffect(
-    useCallback(() => {
-      console.log("GeolocationPage refreshed");
-      refreshGeolocationPage();
-    }, [])
-  );
-
-  // Function to retrieve the current location
-  const getCurrentLocation = async () => {
-    // Check if permission is already granted
-    const { status } = await Location.getForegroundPermissionsAsync();
-
-    if (status !== "granted") {
-      setLocationPermission(false);
-      const { status: newStatus } =
-        await Location.requestForegroundPermissionsAsync();
-      if (newStatus !== "granted") {
-        setLocationPermission(false);
-        Alert.alert(
-          i18n.t("error"),
-          i18n.t("locationPermissionDenied"),
-          [
-            {
-              text: i18n.t("openSettings"),
-              onPress: () => Linking.openSettings(),
-            },
-          ],
-          { cancelable: false }
-        );
-        setLoading(false);
-        return;
-      } else {
-        setLocationPermission(true);
-      }
-    } else {
-      setLocationPermission(true);
-    }
-
-    // Get the user's current position
-    const location = await Location.getCurrentPositionAsync({});
-    setCurrentLocation({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    });
-
-    setRegion({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.01,
-      longitudeDelta: 0.01,
-    });
-
-    setLoading(false);
-  };
-
-  // Type definition for hearing aids
-  type HearingAid = {
-    id: number;
-    latitude: number;
-    longitude: number;
-    title: string;
-  };
-
-  // Function to focus the map on a selected hearing aid
-  const focusOnHearingAid = (aid: HearingAid) => {
-    setRegion({
-      latitude: aid.latitude,
-      longitude: aid.longitude,
-      latitudeDelta: 0.01,
-      longitudeDelta: 0.01,
-    });
-  };
-
-  // Function to display a selection menu for hearing aids
-  const selectHearingAid = () => {
-    Alert.alert(i18n.t("selectHearingAid"), i18n.t("chooseAidToCenter"), [
-      ...hearingAids.map((aid) => ({
-        text: i18n.t(`hearingAid${aid.id}`),
-
-        onPress: () => focusOnHearingAid(aid),
-      })),
-      { text: i18n.t("cancel"), style: "cancel" },
-    ]);
-  };
-
-  // Function to calculate distance between two coordinates
-  const calculateDistance = (
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number
-  ): string => {
-    const R = 6371; // Earth's radius in km
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return (R * c).toFixed(2); // Distance in km
-  };
-
   // Calculate the vision cone based on heading
   const getVisionCone = () => {
+    if (!currentLocation) {
+      return [{ latitude: 0, longitude: 0 }];
+    }
+
     const centerLat = currentLocation.latitude;
     const centerLon = currentLocation.longitude;
     const radius = 0.001;
@@ -286,6 +380,7 @@ export default function GeolocationPage() {
     const numPoints = 60;
 
     const conePoints = [];
+    conePoints.push({ latitude: centerLat, longitude: centerLon });
 
     // Add the central point
     conePoints.push({ latitude: centerLat, longitude: centerLon });
@@ -307,7 +402,33 @@ export default function GeolocationPage() {
     return conePoints;
   };
 
-  // Function to refresh the geolocation page
+  /* ##########################################################
+   ###############    ASYNCSTORAGE   ##########
+   ########################################################## */
+
+  // Save location data to AsyncStorage
+  const saveLocationData = async () => {
+    try {
+      const data = {
+        currentLocation,
+        hearingAids,
+      };
+      await AsyncStorage.setItem("geolocationData", JSON.stringify(data));
+    } catch (error) {
+      console.error("Failed to save geolocation data", error);
+    }
+  };
+
+  // Save location data whenever currentLocation or hearingAids change
+  useEffect(() => {
+    saveLocationData();
+  }, [currentLocation, hearingAids]);
+
+  /* ##########################################################
+   ###############    PAGE REFRESH   ##########
+   ########################################################## */
+
+  // Refresh the geolocation page
   const refreshGeolocationPage = async () => {
     setLoading(true);
     setSelectedHearingAid(null);
@@ -315,34 +436,46 @@ export default function GeolocationPage() {
     setLoading(false);
   };
 
+  // Refresh the page whenever it is revisited
+  useFocusEffect(
+    useCallback(() => {
+      console.log("GeolocationPage refreshed");
+      refreshGeolocationPage();
+    }, [])
+  );
+
+  /* ##########################################################
+   ###########    MAP & UI ELEMENTS    ######################
+   ########################################################## */
+
   return (
     <View style={styles.container}>
-      {loading ? (
-        <ActivityIndicator
-          size="large"
-          color="#F00"
-          style={styles.activityIndicator}
-        />
-      ) : !locationPermission ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>
-            {i18n.t("locationPermissionDenied")}
-          </Text>
+      {/* Load header */}
+      {loading && (
+        <View style={styles.loadingHeader}>
+          <ActivityIndicator size="small" color="#ffffff" />
+          <Text style={styles.loadingText}>{i18n.t("loading")}</Text>
         </View>
-      ) : (
-        <>
-          <MapView
-            style={styles.map}
-            region={region}
-            onPress={() => {
-              if (selectedHearingAid) {
-                setSelectedHearingAid(null);
-              }
-            }}
-          >
-            {/* User's current location marker */}
+      )}
+
+      {/* Map */}
+      <MapView
+        style={styles.map}
+        region={region}
+        onPress={() => {
+          if (selectedHearingAid) {
+            setSelectedHearingAid(null);
+          }
+        }}
+      >
+        {/* User's current location marker */}
+        {currentLocation && (
+          <>
             <Marker
-              coordinate={currentLocation}
+              coordinate={{
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
+              }}
               title={i18n.t("yourLocation")}
               pinColor="blue"
               anchor={{ x: 0.5, y: 0.5 }}
@@ -355,62 +488,82 @@ export default function GeolocationPage() {
               fillColor="rgba(0, 150, 255, 0.3)"
               strokeColor="rgba(0, 150, 255, 0.5)"
             />
+          </>
+        )}
 
-            {/* Hearing aid markers */}
-            {hearingAids.map((device) => (
-              <Marker
-                key={device.id}
-                coordinate={{
-                  latitude: device.latitude,
-                  longitude: device.longitude,
-                }}
-                title={`${i18n.t("hearingAid")} ${device.id}`}
-                description={`${i18n.t("distance")}: ${calculateDistance(
-                  currentLocation.latitude,
-                  currentLocation.longitude,
-                  device.latitude,
-                  device.longitude
-                )} km`}
-                onPress={() => setSelectedHearingAid(device)}
-              />
-            ))}
-
-            {/* Display visual cone for orientation */}
-            <Polygon
-              coordinates={getVisionCone()}
-              fillColor="rgba(255,0,0,0.3)"
-              strokeColor="red"
-              strokeWidth={1}
+        {/* Hearing aid markers */}
+        {currentLocation &&
+          hearingAids.map((device) => (
+            <Marker
+              key={device.id}
+              coordinate={{
+                latitude: device.latitude,
+                longitude: device.longitude,
+              }}
+              title={`${i18n.t("hearingAid")} ${device.id}`}
+              description={
+                currentLocation
+                  ? `Distance: ${calculateDistance(
+                      currentLocation.latitude,
+                      currentLocation.longitude,
+                      device.latitude,
+                      device.longitude
+                    )}`
+                  : "Calcul en cours..."
+              }
+              pinColor={aidLost && device.id === 1 ? "green" : "yellow"}
+              onPress={() => {
+                setSelectedHearingAid(device);
+              }}
             />
-          </MapView>
+          ))}
 
-          {/* Image bubble for selected marker */}
-          {Platform.OS === "ios" && selectedHearingAid && (
-            <View style={styles.imageBubble}>
-              <Text style={styles.imageText}>
-                {i18n.t("hearingAid")} {selectedHearingAid.id}
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  const aidTitle = encodeURIComponent(
-                    i18n.t("hearingAid") + ` ${selectedHearingAid?.id}`
-                  );
-                  const url = `maps://?q=${aidTitle}&ll=${selectedHearingAid?.latitude},${selectedHearingAid?.longitude}`;
-                  Linking.openURL(url).catch((err) =>
-                    console.error("Failed to open Maps", err)
-                  );
-                }}
-              >
-                <Image
-                  source={require("@/assets/images/map-preview.jpg")}
-                  style={styles.mapPreview}
-                />
-              </TouchableOpacity>
-            </View>
-          )}
+        {/* Vvisual cone for orientation */}
+        {currentLocation && getVisionCone().length > 1 && (
+          <Polygon
+            coordinates={getVisionCone()}
+            fillColor="rgba(255,0,0,0.3)"
+            strokeColor="red"
+            strokeWidth={1}
+          />
+        )}
+      </MapView>
 
-          {/* Buttons */}
-          <View style={styles.buttonContainer}>
+      {aidLost && selectedHearingAid && selectedHearingAid.id === 1 && (
+        <TouchableOpacity style={styles.restoreButton} onPress={restoreLostAid}>
+          <Text style={styles.buttonText}>{i18n.t("foundAid")}</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Image bubble for selected marker */}
+      {Platform.OS === "ios" && selectedHearingAid && (
+        <View style={styles.imageBubble}>
+          <Text style={styles.imageText}>
+            {i18n.t("hearingAid")} {selectedHearingAid.id}
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              const aidTitle = encodeURIComponent(
+                i18n.t("hearingAid") + ` ${selectedHearingAid?.id}`
+              );
+              const url = `maps://?q=${aidTitle}&ll=${selectedHearingAid?.latitude},${selectedHearingAid?.longitude}`;
+              Linking.openURL(url).catch((err) =>
+                console.error("Failed to open Maps", err)
+              );
+            }}
+          >
+            <Image
+              source={require("@/assets/images/map-preview.jpg")}
+              style={styles.mapPreview}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Buttons */}
+      <View style={styles.buttonContainer}>
+        {currentLocation && (
+          <>
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
@@ -435,9 +588,9 @@ export default function GeolocationPage() {
             <TouchableOpacity style={styles.button} onPress={selectHearingAid}>
               <Text style={styles.buttonText}>{i18n.t("centerOnAids")}</Text>
             </TouchableOpacity>
-          </View>
-        </>
-      )}
+          </>
+        )}
+      </View>
     </View>
   );
 }

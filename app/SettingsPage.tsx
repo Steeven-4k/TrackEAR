@@ -64,17 +64,27 @@ export default function SettingsPage() {
     checkNotificationPermission();
   }, []);
 
-  // Load saved notification settings
+  // Sauvegarde des choix des switch
   useEffect(() => {
-    const loadNotificationSettings = async () => {
-      const savedNotifications = await AsyncStorage.getItem(
-        "notificationsEnabled"
-      );
-      if (savedNotifications !== null) {
-        setNotificationsEnabled(JSON.parse(savedNotifications));
+    const loadSettings = async () => {
+      try {
+        const settings = await AsyncStorage.multiGet([
+          "notificationsEnabled",
+          "vibrationEnabled",
+          "contactByEmail",
+          "contactByPhone",
+        ]);
+
+        setNotificationsEnabled(JSON.parse(settings[0][1]) ?? false);
+        setVibrationEnabled(JSON.parse(settings[1][1]) ?? true);
+        setContactByEmail(JSON.parse(settings[2][1]) ?? true);
+        setContactByPhone(JSON.parse(settings[3][1]) ?? true);
+      } catch (error) {
+        console.error("Erreur lors du chargement des paramètres :", error);
       }
     };
-    loadNotificationSettings();
+
+    loadSettings();
   }, []);
 
   // Function to handle notification permission request
@@ -103,6 +113,10 @@ export default function SettingsPage() {
           ]
         );
         setNotificationsEnabled(false);
+        await AsyncStorage.setItem(
+          "notificationsEnabled",
+          JSON.stringify(value)
+        );
         return;
       }
       Alert.alert(
@@ -114,6 +128,21 @@ export default function SettingsPage() {
     await AsyncStorage.setItem("notificationsEnabled", JSON.stringify(value));
   };
 
+  const handleVibrationToggle = async (value: boolean) => {
+    setVibrationEnabled(value);
+    await AsyncStorage.setItem("vibrationEnabled", JSON.stringify(value));
+  };
+
+  const handleEmailToggle = async (value: boolean) => {
+    setContactByEmail(value);
+    await AsyncStorage.setItem("contactByEmail", JSON.stringify(value));
+  };
+
+  const handlePhoneToggle = async (value: boolean) => {
+    setContactByPhone(value);
+    await AsyncStorage.setItem("contactByPhone", JSON.stringify(value));
+  };
+
   // Function to change the app's language
   const changeLanguage = async (lang: string) => {
     i18n.locale = lang; // Update i18n locale
@@ -121,6 +150,14 @@ export default function SettingsPage() {
     await AsyncStorage.setItem("selectedLanguage", lang); // Persist language selection
     setModalVisible(false); // Close modal after selection
   };
+
+  useEffect(() => {
+    console.log("État actuel des paramètres:");
+    console.log("Notifications:", notificationsEnabled);
+    console.log("Vibration:", vibrationEnabled);
+    console.log("Contact Email:", contactByEmail);
+    console.log("Contact Téléphone:", contactByPhone);
+  }, [notificationsEnabled, vibrationEnabled, contactByEmail, contactByPhone]);
 
   return (
     <SafeAreaProvider>
@@ -140,7 +177,7 @@ export default function SettingsPage() {
             <Text style={styles.label}>{i18n.t("enableNotifications")}</Text>
             <Switch
               value={notificationsEnabled}
-              onValueChange={(value) => handleNotificationToggle(value)}
+              onValueChange={handleNotificationToggle}
             />
           </View>
 
@@ -149,7 +186,7 @@ export default function SettingsPage() {
             <Text style={styles.label}>{i18n.t("enableVibration")}</Text>
             <Switch
               value={vibrationEnabled}
-              onValueChange={(value) => setVibrationEnabled(value)}
+              onValueChange={handleVibrationToggle}
             />
           </View>
 
@@ -169,17 +206,11 @@ export default function SettingsPage() {
           </View>
           <View style={styles.settingRow}>
             <Text style={styles.label}>{i18n.t("contactByEmail")}</Text>
-            <Switch
-              value={contactByEmail}
-              onValueChange={(value) => setContactByEmail(value)}
-            />
+            <Switch value={contactByEmail} onValueChange={handleEmailToggle} />
           </View>
           <View style={styles.settingRow}>
             <Text style={styles.label}>{i18n.t("contactByPhone")}</Text>
-            <Switch
-              value={contactByPhone}
-              onValueChange={(value) => setContactByPhone(value)}
-            />
+            <Switch value={contactByPhone} onValueChange={handlePhoneToggle} />
           </View>
 
           {/* Language Selection */}

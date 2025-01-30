@@ -30,6 +30,8 @@ I18n.translations = {
     selectHearingAid: "Select Hearing Aid",
     chooseAidToCenter: "Choose which hearing aid to center on.",
     openSettings: "Open Settings",
+    loading: "Loading...",
+    foundAid: "Hearing aid found",
 
     // Relatives Page
     relativesPageTitle: "Contacts To Alert",
@@ -163,6 +165,8 @@ I18n.translations = {
     selectHearingAid: "Sélectionnez une aide auditive",
     chooseAidToCenter: "Choisissez quelle aide auditive recentrer.",
     openSettings: "Ouvrir les paramètres",
+    loading: "Chargement...",
+    foundAid: "Prothèse retrouvée",
 
     // Relatives Page
     relativesPageTitle: "Contacts À Alerter",
@@ -300,6 +304,8 @@ I18n.translations = {
     selectHearingAid: "Seleccionar audífono",
     chooseAidToCenter: "Elija qué audífono centrar.",
     openSettings: "Abrir configuración",
+    loading: "Cargando...",
+    foundAid: "Audífono encontrado",
 
     // Relatives Page
     relativesPageTitle: "Contactos Para Alertar",
@@ -437,6 +443,8 @@ I18n.translations = {
     selectHearingAid: "Hörgerät auswählen",
     chooseAidToCenter: "Wählen Sie, welches Hörgerät zentriert werden soll.",
     openSettings: "Einstellungen öffnen",
+    loading: "Laden...",
+    foundAid: "Hörgerät gefunden",
 
     // Relatives Page
     relativesPageTitle: "Kontakte Zum Benachrichtigen",
@@ -574,6 +582,8 @@ I18n.translations = {
     selectHearingAid: "Seleziona apparecchio acustico",
     chooseAidToCenter: "Scegli quale apparecchio acustico centrare.",
     openSettings: "Apri impostazioni",
+    loading: "Caricamento...",
+    foundAid: "Apparecchio acustico trovato",
 
     // Relatives Page
     relativesPageTitle: "Contatti Da Avvisare",
