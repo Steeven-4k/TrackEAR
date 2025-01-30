@@ -41,6 +41,14 @@ export default function ProfilePage() {
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePhoneNumber = (phone: string): boolean => /^\d+$/.test(phone);
 
+  // Sauvegarde l'email renseigné dans l'AsyncStorage
+  useEffect(() => {
+    const saveEmailToStorage = async () => {
+      await AsyncStorage.setItem("profileEmail", email);
+    };
+    saveEmailToStorage();
+  }, [email]);
+
   // Load saved profile data from local storage
   useEffect(() => {
     const loadProfileData = async () => {

@@ -24,11 +24,146 @@ import * as Location from "expo-location";
 const manager = new BleManager();
 
 const DevicesPage = () => {
+  // Définition du type des proches
+  type Relative = {
+    email: string;
+  };
+
+  // Définition du type de l'objet Location
+  type LocationType = {
+    latitude: number;
+    longitude: number;
+  };
+
   // States to manage devices and scanning status
   const [devices, setDevices] = useState<Device[]>([]);
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
   const [aidLost, setAidLost] = useState<boolean | null>(null);
+
+  /* ##########################################################
+   ###########    SEND AN EMAIL   ##############
+   ########################################################## */
+
+  // Fonction d'envoi d'email
+  const sendEmailAlert = async (userEmail: string | null) => {
+    const SENDGRID_API_KEY =
+      "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";
+    const SENDGRID_URL = "https://api.sendgrid.com/v3/mail/send";
+
+    // Récupérer la langue actuelle de l'application
+    const userLanguage = I18n.locale.split("-")[0];
+
+    // Email pour l'utilisateur
+    const subjectUser = I18n.t("emailSubjectUser", { locale: userLanguage });
+    const bodyUser = I18n.t("emailBodyUser", { locale: userLanguage });
+
+    // Email pour les proches
+    const subjectRelatives = I18n.t("emailSubjectRelatives", {
+      locale: userLanguage,
+    });
+    const bodyRelatives = I18n.t("emailBodyRelatives", {
+      locale: userLanguage,
+    });
+
+    // Vérifier si l'utilisateur souhaite être alerté par email
+    const emailAlertSetting = await AsyncStorage.getItem("contactByEmail");
+
+    // Récupérer les proches enregistrés dans AsyncStorage
+    let relativesEmails: string[] = [];
+    try {
+      const relativesData = await AsyncStorage.getItem("relativesData");
+      if (relativesData) {
+        const relatives: Relative[] = JSON.parse(relativesData);
+        relativesEmails = relatives
+          .map((relative: Relative) => relative.email)
+          .filter(Boolean);
+      }
+    } catch (error) {
+      console.error("❌ Erreur lors de la récupération des proches:", error);
+    }
+
+    // **Envoi de l'email aux proches (TOUJOURS envoyé, indépendamment du switch utilisateur)**
+    if (relativesEmails.length > 0) {
+      console.log("📩 [DEBUG] Envoi des emails aux proches :", relativesEmails);
+
+      for (const email of relativesEmails) {
+        const emailDataRelatives = {
+          personalizations: [{ to: [{ email }] }],
+          from: { email: "noreply.trackear@gmail.com" },
+          subject: subjectRelatives,
+          content: [{ type: "text/plain", value: `${bodyRelatives.trim()}` }],
+        };
+
+        try {
+          const response = await fetch(SENDGRID_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${SENDGRID_API_KEY}`,
+            },
+            body: JSON.stringify(emailDataRelatives),
+          });
+
+          if (response.ok) {
+            console.log(
+              `✅ [DEBUG] Email envoyé avec succès au proche : ${email}`
+            );
+          } else {
+            console.error(
+              `❌ [DEBUG] Erreur lors de l'envoi de l'email au proche ${email} :`,
+              await response.text()
+            );
+          }
+        } catch (error) {
+          console.error(`❌ [DEBUG] Erreur réseau (proche ${email}) :`, error);
+        }
+      }
+    } else {
+      console.log("⚠️ [DEBUG] Aucun proche renseigné, pas d'email envoyé.");
+    }
+
+    // **Envoi de l'email à l'utilisateur seulement si le switch est activé**
+    if (userEmail && emailAlertSetting === "true") {
+      console.log("📩 [DEBUG] Envoi de l'email à l'utilisateur :", userEmail);
+
+      const emailDataUser = {
+        personalizations: [{ to: [{ email: userEmail }] }],
+        from: { email: "noreply.trackear@gmail.com" },
+        subject: subjectUser,
+        content: [{ type: "text/plain", value: `${bodyUser.trim()}` }],
+      };
+
+      try {
+        const response = await fetch(SENDGRID_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${SENDGRID_API_KEY}`,
+          },
+          body: JSON.stringify(emailDataUser),
+        });
+
+        if (response.ok) {
+          console.log(
+            "✅ [DEBUG] Email envoyé avec succès à l'utilisateur :",
+            userEmail
+          );
+        } else {
+          console.error(
+            "❌ [DEBUG] Erreur lors de l'envoi de l'email utilisateur :",
+            await response.text()
+          );
+        }
+      } catch (error) {
+        console.error("❌ [DEBUG] Erreur réseau (utilisateur) :", error);
+      }
+    } else {
+      console.log(
+        "⚠️ [DEBUG] Le switch 'contact par email' est désactivé, pas d'email envoyé à l'utilisateur."
+      );
+    }
+  };
 
   // Ajout d'un effet pour démarrer la récupération en arrière-plan
   useEffect(() => {
@@ -48,7 +183,7 @@ const DevicesPage = () => {
   }, [connectedDevice]);
 
   // Fonction pour surveiller l'UID du microcontrôleur
-  const monitorDeviceUID = async (device) => {
+  const monitorDeviceUID = async (device: Device) => {
     try {
       if (!device.isConnected) {
         console.warn("L'appareil n'est plus connecté.");
@@ -109,7 +244,7 @@ const DevicesPage = () => {
   let notificationSent = false; // Variable globale pour suivre l'état de la notification
 
   // Fonction pour envoyer une notification avec localisation et heure
-  const sendNotificationWithDetails = async (location) => {
+  const sendNotificationWithDetails = async (location: LocationType) => {
     // Vérifie que les notifications sont activées dans les paramètres de l'application
     const notificationsSetting = await AsyncStorage.getItem(
       "notificationsEnabled"
@@ -163,40 +298,59 @@ const DevicesPage = () => {
   // Vérifier si la prothèse est perdue et envoyer une seule notification
   useEffect(() => {
     const checkAidLost = async () => {
-      // N'envoie pas de notifications si les paramètres sont désactivés dans l'application
+      // Récupération des paramètres stockés
       const notificationsSetting = await AsyncStorage.getItem(
         "notificationsEnabled"
       );
-      if (notificationsSetting !== "true") {
-        console.log("Notifications désactivées, vérification annulée.");
-        return;
-      }
+      const emailAlertSetting = await AsyncStorage.getItem("contactByEmail");
+      const userEmail = await AsyncStorage.getItem("profileEmail");
 
-      const storedValue = await AsyncStorage.getItem("aidLost");
+      const storedValue = await AsyncStorage.getItem("aidLost"); // Valeur actuelle
+      const lastState = await AsyncStorage.getItem("lastAidState"); // Dernier état enregistré
       const lastNotification = await AsyncStorage.getItem(
         "lastNotificationSent"
       );
+      const lastEmailSent = await AsyncStorage.getItem("lastEmailSent");
 
-      if (storedValue === "true" && !lastNotification) {
+      // Si "True" est détecté et que l'état précédent était "False", on déclenche une alerte
+      if (storedValue === "true" && lastState !== "true") {
+        console.log("📢 Premier True détecté, envoi des alertes...");
+
         const location = await Location.getCurrentPositionAsync({});
         const userLocation = {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
         };
 
-        // Envoi de la notification
-        await sendNotificationWithDetails(userLocation);
+        // Envoi d'une seule notification si elle n'a pas été envoyée
+        if (!lastNotification && notificationsSetting === "true") {
+          await sendNotificationWithDetails(userLocation);
+          await AsyncStorage.setItem("lastNotificationSent", "true");
+        }
 
-        // Marquer la notification comme envoyée
-        await AsyncStorage.setItem("lastNotificationSent", "true");
-      } else if (storedValue !== "true") {
-        // Réinitialiser lorsque la prothèse est retrouvée
+        // Envoi d'un seul email si activé et non déjà envoyé
+        if (!lastEmailSent && emailAlertSetting === "true" && userEmail) {
+          await sendEmailAlert(userEmail);
+          await AsyncStorage.setItem("lastEmailSent", "true");
+        }
+      }
+
+      // Si "False" est détecté, on réinitialise les alertes
+      if (storedValue === "false" && lastState !== "false") {
+        console.log("✅ Prothèse retrouvée, réinitialisation des alertes.");
         await AsyncStorage.removeItem("lastNotificationSent");
+        await AsyncStorage.removeItem("lastEmailSent");
+      }
+
+      // Mise à jour du dernier état connu
+      if (storedValue !== null) {
+        await AsyncStorage.setItem("lastAidState", storedValue);
+      } else {
+        console.warn("⚠️ [DEBUG] storedValue est null, aucun état mis à jour.");
       }
     };
 
     const interval = setInterval(checkAidLost, 5000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -315,8 +469,8 @@ const DevicesPage = () => {
   };
 
   const startAidLostMonitor = (device: Device) => {
-    let lastStoredAidLost = null;
-    let lastStoredDoubleValue = null;
+    let lastStoredAidLost: boolean | null = null;
+    let lastStoredDoubleValue: number | null = null;
 
     const monitorInterval = setInterval(async () => {
       try {
@@ -467,7 +621,7 @@ const DevicesPage = () => {
   }, [connectedDevice]);
 
   // Redécouverte des services et caractéristiques lors de la reconnexion de la prothèse auditive
-  const discoverDeviceServices = async (device) => {
+  const discoverDeviceServices = async (device: Device) => {
     try {
       const services = await device.discoverAllServicesAndCharacteristics();
       console.log("Services découverts:", services);

@@ -96,6 +96,33 @@ I18n.translations = {
     aidLostDetected: "Loss detected at",
     latitude: "Latitude",
     longitude: "Longitude",
+    emailSubjectUser: "Important: Your hearing aid might be lost",
+    emailBodyUser: `
+      Dear user,
+
+      We detected that your hearing aid might have been misplaced. 
+      Don't worry, you can check its last known location using the TrackEAR app.
+
+      Stay calm and follow the steps provided in the application to retrieve your device.
+
+      If you have any questions, feel free to contact our support team.
+
+      Best regards,
+      The TrackEAR Team
+    `,
+
+    emailSubjectRelatives: "Alert: A hearing aid has been lost",
+    emailBodyRelatives: `
+      Dear relative,
+
+      The user you are connected with via the TrackEAR app has lost their hearing aid.
+      Please assist them in retrieving their device.
+
+      You can check their last known location via the TrackEAR app.
+
+      Best regards,
+      The TrackEAR Team
+    `,
 
     // Profile Page
     email: "Email",
@@ -231,6 +258,34 @@ I18n.translations = {
     aidLostDetected: "Perte détectée à",
     latitude: "Latitude",
     longitude: "Longitude",
+    emailSubjectUser:
+      "Important : Votre prothèse auditive pourrait être perdue",
+    emailBodyUser: `
+      Cher utilisateur,
+
+      Nous avons détecté que votre prothèse auditive pourrait avoir été égarée. 
+      Pas d’inquiétude, vous pouvez vérifier sa dernière position connue via l’application TrackEAR.
+
+      Restez serein et suivez les étapes indiquées dans l’application pour retrouver votre appareil.
+
+      Pour toute question, n’hésitez pas à contacter notre support.
+
+      Cordialement,
+      L'équipe TrackEAR
+    `,
+
+    emailSubjectRelatives: "Alerte : Une prothèse auditive a été perdue",
+    emailBodyRelatives: `
+      Cher proche,
+
+      L'utilisateur avec lequel vous êtes connecté via l’application TrackEAR a perdu sa prothèse auditive.
+      Merci de l’assister pour retrouver son appareil.
+
+      Vous pouvez vérifier sa dernière position connue via l’application TrackEAR.
+
+      Cordialement,
+      L'équipe TrackEAR
+    `,
 
     // Profile Page
     email: "Email",
@@ -371,6 +426,20 @@ I18n.translations = {
     aidLostDetected: "Pérdida detectada a las",
     latitude: "Latitud",
     longitude: "Longitud",
+    emailSubject: "Importante: Su audífono podría estar perdido",
+    emailBody: `
+      Estimado usuario,
+
+      Hemos detectado que su audífono podría haberse extraviado. 
+      No se preocupe, puede verificar su última ubicación conocida a través de la aplicación TrackEAR.
+
+      Mantenga la calma y siga los pasos indicados en la aplicación para recuperar su dispositivo.
+
+      Si tiene alguna pregunta, no dude en contactar con nuestro equipo de soporte.
+
+      Atentamente,
+      El equipo de TrackEAR
+    `,
 
     // Profile Page
     email: "Correo electrónico",
@@ -511,6 +580,20 @@ I18n.translations = {
     aidLostDetected: "Verlust festgestellt um",
     latitude: "Breite",
     longitude: "Länge",
+    emailSubject: "Wichtig: Ihr Hörgerät könnte verloren gegangen sein",
+    emailBody: `
+      Sehr geehrter Nutzer,
+
+      Wir haben festgestellt, dass Ihr Hörgerät möglicherweise verlegt wurde. 
+      Keine Sorge, Sie können den letzten bekannten Standort in der TrackEAR-App überprüfen.
+
+      Bleiben Sie ruhig und folgen Sie den Anweisungen in der App, um Ihr Gerät wiederzufinden.
+
+      Wenn Sie Fragen haben, können Sie sich jederzeit an unser Support-Team wenden.
+
+      Mit freundlichen Grüßen,
+      Das TrackEAR-Team
+    `,
 
     // Profile Page
     email: "E-Mail",
@@ -649,6 +732,21 @@ I18n.translations = {
     aidLostDetected: "Perdita rilevata alle",
     latitude: "Latitudine",
     longitude: "Longitudine",
+    emailSubject:
+      "Importante: Il tuo apparecchio acustico potrebbe essere smarrito",
+    emailBody: `
+      Caro utente,
+
+      Abbiamo rilevato che il tuo apparecchio acustico potrebbe essere stato smarrito. 
+      Non preoccuparti, puoi controllare la sua ultima posizione conosciuta tramite l'app TrackEAR.
+
+      Rimani calmo e segui i passaggi indicati nell'app per recuperare il tuo dispositivo.
+
+      Se hai domande, non esitare a contattare il nostro team di supporto.
+
+      Cordiali saluti,
+      Il team TrackEAR
+    `,
 
     // Profile Page
     email: "Email",
