@@ -10,7 +10,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import i18n from "../constants/i18n";
+import i18n from "@/constants/i18n";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 

@@ -19,7 +19,6 @@ I18n.translations = {
 
     // Geolocation Page
     locationPermissionDenied: "Permission to access location was denied.",
-    noMarkersAvailable: "No markers available to center on.",
     centerOnMe: "Center on Me",
     centerOnAids: "Center on Aids",
     yourLocation: "Your Location",
@@ -158,7 +157,6 @@ I18n.translations = {
     contactByEmail: "Contact by Email",
     contactByPhone: "Contact by Phone",
     language: "Language",
-    goBack: "Go Back",
     hintText:
       "Choose how you prefer to be contacted in case of loss: by email or phone.",
     notificationPermissionDenied: "Permission denied to show notifications.",
@@ -181,7 +179,6 @@ I18n.translations = {
 
     // Geolocation Page
     locationPermissionDenied: "Permission de localisation refusée.",
-    noMarkersAvailable: "Aucun marqueur disponible.",
     centerOnMe: "Centrer sur moi",
     centerOnAids: "Centrer sur l'aide",
     yourLocation: "Votre Position",
@@ -324,7 +321,6 @@ I18n.translations = {
     contactByEmail: "Contact par email",
     contactByPhone: "Contact par téléphone",
     language: "Langue",
-    goBack: "Retour",
     hintText:
       "Choisissez comment vous préférez être contacté(e) en cas de perte : par email ou téléphone.",
     notificationPermissionDenied:
@@ -348,7 +344,6 @@ I18n.translations = {
 
     // Geolocation Page
     locationPermissionDenied: "Permiso de ubicación denegado.",
-    noMarkersAvailable: "No hay marcadores disponibles.",
     centerOnMe: "Centrar en mí",
     centerOnAids: "Centrar en la ayuda",
     yourLocation: "Tu Ubicación",
@@ -477,7 +472,6 @@ I18n.translations = {
     contactByEmail: "Contacto por correo electrónico",
     contactByPhone: "Contacto por teléfono",
     language: "Idioma",
-    goBack: "Volver",
     hintText:
       "Elija cómo prefiere ser contactado en caso de pérdida: por correo electrónico o teléfono.",
     notificationPermissionDenied:
@@ -501,7 +495,6 @@ I18n.translations = {
 
     // Geolocation Page
     locationPermissionDenied: "Standorterlaubnis verweigert.",
-    noMarkersAvailable: "Keine Markierungen verfügbar.",
     centerOnMe: "Auf mich zentrieren",
     centerOnAids: "Auf Hörhilfe zentrieren",
     yourLocation: "Ihr Standort",
@@ -630,7 +623,6 @@ I18n.translations = {
     contactByEmail: "Kontakt per E-Mail",
     contactByPhone: "Kontakt per Telefon",
     language: "Sprache",
-    goBack: "Zurück",
     hintText:
       "Wählen Sie, wie Sie im Verlustfall kontaktiert werden möchten: per E-Mail oder Telefon.",
     notificationPermissionDenied:
@@ -654,7 +646,6 @@ I18n.translations = {
 
     // Geolocation Page
     locationPermissionDenied: "Permesso di posizione negato.",
-    noMarkersAvailable: "Nessun marcatore disponibile.",
     centerOnMe: "Centra su di me",
     centerOnAids: "Centra sull'aiuto",
     yourLocation: "La tua posizione",
@@ -782,7 +773,6 @@ I18n.translations = {
     contactByEmail: "Contatto via email",
     contactByPhone: "Contatto telefonico",
     language: "Lingua",
-    goBack: "Torna indietro",
     hintText:
       "Scegli come preferisci essere contattato in caso di smarrimento: tramite email o telefono.",
     notificationPermissionDenied:

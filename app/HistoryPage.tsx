@@ -4,54 +4,87 @@ import { View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "./HistoryPage.style";
-import i18n from "../constants/i18n";
+import i18n from "@/constants/i18n";
 
 export default function HistoryPage() {
-  const [notifications, setNotifications] = useState<string[]>([]);
   const navigation = useNavigation();
+
+  /* ##########################################################
+   ###########    STATES & GLOBAL VARIABLES   ##############
+   ########################################################## */
+
+  // State to store notification history
+  const [notifications, setNotifications] = useState<
+    { timestamp: string; latitude: number; longitude: number }[]
+  >([]);
+
+  /* ##########################################################
+   ###############   ASYNCSTORAGE FUNCTIONS   #################
+   ########################################################## */
+
+  // Save notifications in AsyncStorage
+  const saveNotifications = async (
+    newNotifications: {
+      timestamp: string;
+      latitude: number;
+      longitude: number;
+    }[]
+  ) => {
+    try {
+      await AsyncStorage.setItem(
+        "notifications",
+        JSON.stringify(newNotifications)
+      );
+      setNotifications([...newNotifications]);
+    } catch (error) {
+      console.error("Error while saving notifications :", error);
+    }
+  };
 
   // Load notifications from AsyncStorage
   const loadNotifications = async () => {
     try {
       const storedNotifications = await AsyncStorage.getItem("notifications");
       if (storedNotifications) {
-        setNotifications(JSON.parse(storedNotifications));
+        const parsedNotifications: {
+          timestamp: string;
+          latitude: number;
+          longitude: number;
+        }[] = JSON.parse(storedNotifications);
+        if (Array.isArray(parsedNotifications)) {
+          setNotifications(parsedNotifications);
+        }
       }
     } catch (error) {
-      console.error("Error while loading notifications :", error);
+      console.error("Error while loading notifications:", error);
     }
   };
 
-  // Effect to update the dynamic title
+  /* ##########################################################
+   ###############   EFFECTS   #################
+   ########################################################## */
+
+  // Set dynamic title based on language
   useEffect(() => {
     navigation.setOptions({
       title: i18n.t("historic"),
     });
-  }, [i18n.locale]); // Responds to language change
+  }, [i18n.locale]);
 
-  // Effect to refresh every 5 seconds
+  // Load notifications and refresh the page every 5 seconds
   useEffect(() => {
     loadNotifications();
 
     const interval = setInterval(() => {
-      loadNotifications(); // Reload notifications every 5 seconds
+      loadNotifications();
     }, 5000);
 
     return () => clearInterval(interval);
   }, []);
 
-  // Save notifications in AsyncStorage
-  const saveNotifications = async (newNotifications: string[]) => {
-    try {
-      await AsyncStorage.setItem(
-        "notifications",
-        JSON.stringify(newNotifications)
-      );
-      setNotifications(newNotifications);
-    } catch (error) {
-      console.error("Error while saving notifications :", error);
-    }
-  };
+  /* ##########################################################
+   ###############   HANDLER FUNCTIONS   #################
+   ########################################################## */
 
   // Delete all notifications
   const clearNotifications = () => {
@@ -87,6 +120,10 @@ export default function HistoryPage() {
       },
     ]);
   };
+
+  /* ##########################################################
+   ##################   UI RENDERING   ##################
+   ########################################################## */
 
   return (
     <SafeAreaProvider>

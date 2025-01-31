@@ -13,7 +13,7 @@ import {
 import { Device } from "react-native-ble-plx";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BleManager } from "react-native-ble-plx";
-import I18n from "../../constants/i18n";
+import I18n from "@/constants/i18n";
 import { styles } from "./DevicesPages.style";
 import { Buffer } from "buffer";
 import BackgroundTimer from "react-native-background-timer";
@@ -24,41 +24,51 @@ import * as Location from "expo-location";
 const manager = new BleManager();
 
 const DevicesPage = () => {
-  // Définition du type des proches
+  /* ##########################################################
+   ###########       STATE MANAGEMENT       #################
+   ########################################################## */
+
+  // Define type for relatives
   type Relative = {
     email: string;
   };
 
-  // Définition du type de l'objet Location
+  // Define type for location
   type LocationType = {
     latitude: number;
     longitude: number;
   };
 
-  // States to manage devices and scanning status
+  // State to store the list of discovered Bluetooth devices
   const [devices, setDevices] = useState<Device[]>([]);
+
+  // State to track whether the Bluetooth scan is currently in progress
   const [isScanning, setIsScanning] = useState<boolean>(false);
+
+  // State to store the currently connected Bluetooth device
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+
+  // State to track whether the hearing aid is detected as lost (true), found (false), or unknown (null)
   const [aidLost, setAidLost] = useState<boolean | null>(null);
 
   /* ##########################################################
-   ###########    SEND AN EMAIL   ##############
+   ###########      EMAIL ALERT      ################
    ########################################################## */
 
-  // Fonction d'envoi d'email
+  // Send an email alert to the user and its saved contacts
   const sendEmailAlert = async (userEmail: string | null) => {
     const SENDGRID_API_KEY =
       "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";
     const SENDGRID_URL = "https://api.sendgrid.com/v3/mail/send";
 
-    // Récupérer la langue actuelle de l'application
+    // Retrieve the current language setting
     const userLanguage = I18n.locale.split("-")[0];
 
-    // Email pour l'utilisateur
+    //  Email subjects and bodies for user
     const subjectUser = I18n.t("emailSubjectUser", { locale: userLanguage });
     const bodyUser = I18n.t("emailBodyUser", { locale: userLanguage });
 
-    // Email pour les proches
+    //  Email subjects and bodies for relatives
     const subjectRelatives = I18n.t("emailSubjectRelatives", {
       locale: userLanguage,
     });
@@ -66,10 +76,10 @@ const DevicesPage = () => {
       locale: userLanguage,
     });
 
-    // Vérifier si l'utilisateur souhaite être alerté par email
+    // Check user preferences for email alerts
     const emailAlertSetting = await AsyncStorage.getItem("contactByEmail");
 
-    // Récupérer les proches enregistrés dans AsyncStorage
+    // Retrieve saved relatives from AsyncStorage
     let relativesEmails: string[] = [];
     try {
       const relativesData = await AsyncStorage.getItem("relativesData");
@@ -80,13 +90,11 @@ const DevicesPage = () => {
           .filter(Boolean);
       }
     } catch (error) {
-      console.error("❌ Erreur lors de la récupération des proches:", error);
+      console.error("❌ Error retrieving relatives:", error);
     }
 
-    // **Envoi de l'email aux proches (TOUJOURS envoyé, indépendamment du switch utilisateur)**
+    // Send email to relatives
     if (relativesEmails.length > 0) {
-      console.log("📩 [DEBUG] Envoi des emails aux proches :", relativesEmails);
-
       for (const email of relativesEmails) {
         const emailDataRelatives = {
           personalizations: [{ to: [{ email }] }],
@@ -106,27 +114,18 @@ const DevicesPage = () => {
           });
 
           if (response.ok) {
-            console.log(
-              `✅ [DEBUG] Email envoyé avec succès au proche : ${email}`
-            );
+            console.log(`✅ Email successfully sent to relative: ${email}`);
           } else {
-            console.error(
-              `❌ [DEBUG] Erreur lors de l'envoi de l'email au proche ${email} :`,
-              await response.text()
-            );
+            console.error(`❌ Email send error: ${await response.text()}`);
           }
         } catch (error) {
-          console.error(`❌ [DEBUG] Erreur réseau (proche ${email}) :`, error);
+          console.error(`❌ Network error sending email to ${email}:`, error);
         }
       }
-    } else {
-      console.log("⚠️ [DEBUG] Aucun proche renseigné, pas d'email envoyé.");
     }
 
-    // **Envoi de l'email à l'utilisateur seulement si le switch est activé**
+    // Send email to user if enabled in the app settings
     if (userEmail && emailAlertSetting === "true") {
-      console.log("📩 [DEBUG] Envoi de l'email à l'utilisateur :", userEmail);
-
       const emailDataUser = {
         personalizations: [{ to: [{ email: userEmail }] }],
         from: { email: "noreply.trackear@gmail.com" },
@@ -145,272 +144,21 @@ const DevicesPage = () => {
         });
 
         if (response.ok) {
-          console.log(
-            "✅ [DEBUG] Email envoyé avec succès à l'utilisateur :",
-            userEmail
-          );
+          console.log("✅ Email successfully sent to user:", userEmail);
         } else {
           console.error(
-            "❌ [DEBUG] Erreur lors de l'envoi de l'email utilisateur :",
-            await response.text()
+            `❌ Error sending email to user: ${await response.text()}`
           );
         }
       } catch (error) {
-        console.error("❌ [DEBUG] Erreur réseau (utilisateur) :", error);
+        console.error("❌ Network error sending email to user:", error);
       }
-    } else {
-      console.log(
-        "⚠️ [DEBUG] Le switch 'contact par email' est désactivé, pas d'email envoyé à l'utilisateur."
-      );
     }
   };
 
-  // Ajout d'un effet pour démarrer la récupération en arrière-plan
-  useEffect(() => {
-    const startBackgroundTask = async () => {
-      BackgroundTimer.runBackgroundTimer(async () => {
-        if (connectedDevice) {
-          await monitorDeviceUID(connectedDevice);
-        }
-      }, 5000); // Exécuter toutes les 5 secondes
-    };
-
-    startBackgroundTask();
-
-    return () => {
-      BackgroundTimer.stopBackgroundTimer();
-    };
-  }, [connectedDevice]);
-
-  // Fonction pour surveiller l'UID du microcontrôleur
-  const monitorDeviceUID = async (device: Device) => {
-    try {
-      if (!device.isConnected) {
-        console.warn("L'appareil n'est plus connecté.");
-        return;
-      }
-
-      const services = await device.services();
-      for (const service of services) {
-        const characteristics = await service.characteristics();
-        for (const char of characteristics) {
-          if (
-            char.uuid === "12345678-1234-5678-1234-56789abcdef1" &&
-            char.isReadable
-          ) {
-            const charValue = await char.read();
-            if (charValue.value) {
-              const boolValue =
-                Buffer.from(charValue.value, "base64").readUInt8(0) === 1;
-              setAidLost(boolValue);
-              console.log("Valeur de l'UID récupérée :", boolValue);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.warn(
-        "Erreur lors de la lecture de l'UID en arrière-plan :",
-        error
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (!connectedDevice) {
-      BackgroundTimer.stopBackgroundTimer();
-    }
-  }, [connectedDevice]);
-
-  // Fonction pour obtenir l'heure actuelle formatée
-  const getCurrentTime = () => {
-    const now = new Date();
-    return now.toLocaleTimeString("fr-FR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  };
-
-  // Configuration des notifications
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-    }),
-  });
-
-  let notificationSent = false; // Variable globale pour suivre l'état de la notification
-
-  // Fonction pour envoyer une notification avec localisation et heure
-  const sendNotificationWithDetails = async (location: LocationType) => {
-    // Vérifie que les notifications sont activées dans les paramètres de l'application
-    const notificationsSetting = await AsyncStorage.getItem(
-      "notificationsEnabled"
-    );
-    if (notificationsSetting !== "true") {
-      console.log("Notifications désactivées, envoi annulé.");
-      return;
-    }
-
-    const currentTime = getCurrentTime();
-    const notificationData = {
-      timestamp: currentTime,
-      latitude: location.latitude.toFixed(5),
-      longitude: location.longitude.toFixed(5),
-    };
-
-    // Récupérer les anciennes notifications
-    const storedNotifications = await AsyncStorage.getItem("notifications");
-    const notificationsArray = storedNotifications
-      ? JSON.parse(storedNotifications)
-      : [];
-
-    // Ajouter la nouvelle notification
-    notificationsArray.unshift(notificationData);
-
-    // Limiter l'historique à 20 notifications maximum
-    if (notificationsArray.length > 20) {
-      notificationsArray.pop();
-    }
-
-    // Sauvegarder dans AsyncStorage
-    await AsyncStorage.setItem(
-      "notifications",
-      JSON.stringify(notificationsArray)
-    );
-
-    // Envoyer la notification (toujours dans la langue actuelle)
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: I18n.t("aidLostNotificationTitle"),
-        body: `${I18n.t("aidLostDetected")} ${currentTime} - ${I18n.t(
-          "latitude"
-        )}: ${notificationData.latitude}, ${I18n.t("longitude")}: ${
-          notificationData.longitude
-        }`,
-      },
-      trigger: null, // Notification immédiate
-    });
-  };
-
-  // Vérifier si la prothèse est perdue et envoyer une seule notification
-  useEffect(() => {
-    const checkAidLost = async () => {
-      // Récupération des paramètres stockés
-      const notificationsSetting = await AsyncStorage.getItem(
-        "notificationsEnabled"
-      );
-      const emailAlertSetting = await AsyncStorage.getItem("contactByEmail");
-      const userEmail = await AsyncStorage.getItem("profileEmail");
-
-      const storedValue = await AsyncStorage.getItem("aidLost"); // Valeur actuelle
-      const lastState = await AsyncStorage.getItem("lastAidState"); // Dernier état enregistré
-      const lastNotification = await AsyncStorage.getItem(
-        "lastNotificationSent"
-      );
-      const lastEmailSent = await AsyncStorage.getItem("lastEmailSent");
-
-      // Si "True" est détecté et que l'état précédent était "False", on déclenche une alerte
-      if (storedValue === "true" && lastState !== "true") {
-        console.log("📢 Premier True détecté, envoi des alertes...");
-
-        const location = await Location.getCurrentPositionAsync({});
-        const userLocation = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        };
-
-        // Envoi d'une seule notification si elle n'a pas été envoyée
-        if (!lastNotification && notificationsSetting === "true") {
-          await sendNotificationWithDetails(userLocation);
-          await AsyncStorage.setItem("lastNotificationSent", "true");
-        }
-
-        // Envoi d'un seul email si activé et non déjà envoyé
-        if (!lastEmailSent && emailAlertSetting === "true" && userEmail) {
-          await sendEmailAlert(userEmail);
-          await AsyncStorage.setItem("lastEmailSent", "true");
-        }
-      }
-
-      // Si "False" est détecté, on réinitialise les alertes
-      if (storedValue === "false" && lastState !== "false") {
-        console.log("✅ Prothèse retrouvée, réinitialisation des alertes.");
-        await AsyncStorage.removeItem("lastNotificationSent");
-        await AsyncStorage.removeItem("lastEmailSent");
-      }
-
-      // Mise à jour du dernier état connu
-      if (storedValue !== null) {
-        await AsyncStorage.setItem("lastAidState", storedValue);
-      } else {
-        console.warn("⚠️ [DEBUG] storedValue est null, aucun état mis à jour.");
-      }
-    };
-
-    const interval = setInterval(checkAidLost, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Load stored device and request permissions for Android
-  useEffect(() => {
-    if (Platform.OS === "android") {
-      requestAndroidPermissions();
-    }
-    loadStoredDevice();
-    return () => {
-      manager.stopDeviceScan();
-    };
-  }, []);
-
-  // Request necessary Bluetooth permissions on Android
-  const requestAndroidPermissions = async () => {
-    try {
-      const granted = await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      ]);
-
-      if (
-        granted["android.permission.BLUETOOTH_SCAN"] ===
-          PermissionsAndroid.RESULTS.GRANTED &&
-        granted["android.permission.BLUETOOTH_CONNECT"] ===
-          PermissionsAndroid.RESULTS.GRANTED &&
-        granted["android.permission.ACCESS_FINE_LOCATION"] ===
-          PermissionsAndroid.RESULTS.GRANTED
-      ) {
-        console.log("Bluetooth permissions granted");
-      } else {
-        Alert.alert(I18n.t("error"), I18n.t("permissionsDenied"));
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  // Load connected device from AsyncStorage
-  const loadStoredDevice = async () => {
-    try {
-      const deviceId = await AsyncStorage.getItem("connectedDevice");
-      if (deviceId) {
-        const device = await manager.connectToDevice(deviceId);
-        setConnectedDevice(device);
-        Alert.alert(
-          I18n.t("connected"),
-          `${I18n.t("connectedTo")} ${device.name}`
-        );
-
-        // Start reading aidLost status periodically
-        startAidLostMonitor(device);
-      }
-    } catch (error) {
-      console.error("Failed to load stored device:", error);
-      Alert.alert(I18n.t("error"), I18n.t("loadBluetoothError"));
-    }
-  };
+  /* ##########################################################
+   ###########     DEVICE SCAN     ###############
+   ########################################################## */
 
   // Start scanning for BLE devices
   const startScan = () => {
@@ -446,7 +194,11 @@ const DevicesPage = () => {
     }, 30000);
   };
 
-  // Function to connect to a BLE device
+  /* ##########################################################
+   ###########     DEVICE CONNECTION     ###############
+   ########################################################## */
+
+  // Connect to a BLE device
   const connectToDevice = async (device: Device) => {
     try {
       setIsScanning(false);
@@ -468,88 +220,11 @@ const DevicesPage = () => {
     }
   };
 
-  const startAidLostMonitor = (device: Device) => {
-    let lastStoredAidLost: boolean | null = null;
-    let lastStoredDoubleValue: number | null = null;
+  /* ##########################################################
+   ###########     DEVICE DISCONNECTION     ###############
+   ########################################################## */
 
-    const monitorInterval = setInterval(async () => {
-      try {
-        if (!device.isConnected) {
-          console.warn("Device not connected. Stopping monitoring.");
-          clearInterval(monitorInterval);
-          return;
-        }
-
-        const services = await device.services();
-        for (const service of services) {
-          const characteristics = await service.characteristics();
-          for (const char of characteristics) {
-            // Lecture de la caractéristique aidLost (booléen)
-            if (
-              char.uuid === "12345678-1234-5678-1234-56789abcdef1" &&
-              char.isReadable
-            ) {
-              const charValue = await char.read();
-              if (charValue.value) {
-                const boolValue =
-                  Buffer.from(charValue.value, "base64").readUInt8(0) === 1;
-
-                if (boolValue !== lastStoredAidLost) {
-                  lastStoredAidLost = boolValue;
-                  setAidLost(boolValue);
-                  console.log("🔹 Valeur aidLost récupérée :", boolValue);
-                  await AsyncStorage.setItem(
-                    "aidLost",
-                    JSON.stringify(boolValue)
-                  );
-                }
-              }
-            }
-
-            // Lecture de la caractéristique double
-            if (
-              char.uuid === "12345678-1234-5678-1234-56789abcdef2" &&
-              char.isReadable
-            ) {
-              const charValue = await char.read();
-              if (charValue.value) {
-                const buffer = Buffer.from(charValue.value, "base64");
-
-                // Vérifie si le buffer a bien une taille suffisante pour un double (8 octets)
-                if (buffer.length >= 8) {
-                  const doubleValue = buffer.readDoubleLE(0); // Lecture correcte d'un double
-
-                  if (doubleValue !== lastStoredDoubleValue) {
-                    lastStoredDoubleValue = doubleValue;
-                    console.log(
-                      "🔹 Valeur de l'UID double récupérée :",
-                      doubleValue
-                    );
-                    await AsyncStorage.setItem(
-                      "doubleValue",
-                      JSON.stringify(doubleValue)
-                    );
-                  }
-                } else {
-                  console.warn(
-                    "⚠️ Taille du buffer insuffisante pour un double :",
-                    buffer.length
-                  );
-                }
-              }
-            }
-          }
-        }
-      } catch (error) {
-        console.warn(
-          "❌ Erreur lors de la lecture des caractéristiques :",
-          error
-        );
-      }
-    }, 5000);
-  };
-
-  // Function to disconnect from a BLE device
+  // Disconnect from a BLE device
   const disconnectDevice = async () => {
     if (connectedDevice) {
       Alert.alert(
@@ -580,7 +255,11 @@ const DevicesPage = () => {
     }
   };
 
-  // Reconnexion automatique en cas de connexion perdue avec la prothèse auditive
+  /* ##########################################################
+   ###########     DEVICE RECONNECTION     ###############
+   ########################################################## */
+
+  // Automatic reconnection in case of lost connection with the device
   useEffect(() => {
     const reconnectDevice = async () => {
       const storedDeviceId = await AsyncStorage.getItem("connectedDevice");
@@ -588,9 +267,9 @@ const DevicesPage = () => {
         try {
           const device = await manager.connectToDevice(storedDeviceId);
           setConnectedDevice(device);
-          console.log("Reconnecté à l'appareil:", device.name);
+          console.log("Reconnected to the device:", device.name);
         } catch (error) {
-          console.warn("Échec de la reconnexion:", error);
+          console.warn("Failed reconnection:", error);
         }
       }
     };
@@ -604,7 +283,343 @@ const DevicesPage = () => {
     return () => subscription?.remove();
   }, [connectedDevice]);
 
-  // Mise à jour régulière de l'AsyncStorage en évitant les incohérences entre l'état stocké et l'état réel
+  /* ##########################################################
+   ###########     DEVICE COMMUNICATION     ###############
+   ########################################################## */
+
+  // Effect to retrieve the UID in the background of the app
+  useEffect(() => {
+    const startBackgroundTask = async () => {
+      BackgroundTimer.runBackgroundTimer(async () => {
+        if (connectedDevice) {
+          await monitorDeviceUID(connectedDevice);
+        }
+      }, 5000); // Every 5s
+    };
+
+    startBackgroundTask();
+
+    return () => {
+      BackgroundTimer.stopBackgroundTimer();
+    };
+  }, [connectedDevice]);
+
+  // Monitor the device's UID and read its value
+  const monitorDeviceUID = async (device: Device) => {
+    try {
+      if (!device.isConnected) {
+        console.warn("The device is no longer connected.");
+        return;
+      }
+
+      const services = await device.services();
+      for (const service of services) {
+        const characteristics = await service.characteristics();
+        for (const char of characteristics) {
+          if (
+            char.uuid === "12345678-1234-5678-1234-56789abcdef1" &&
+            char.isReadable
+          ) {
+            const charValue = await char.read();
+            if (charValue.value) {
+              const boolValue =
+                Buffer.from(charValue.value, "base64").readUInt8(0) === 1;
+              setAidLost(boolValue);
+              console.log("Value of the retrieved UID:", boolValue);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.warn("Error while reading UID in background:", error);
+    }
+  };
+
+  // Stop the background timer when there is no connected device
+  useEffect(() => {
+    if (!connectedDevice) {
+      BackgroundTimer.stopBackgroundTimer();
+    }
+  }, [connectedDevice]);
+
+  // Check periodically if the device is lost by reading its UID
+  const startAidLostMonitor = (device: Device) => {
+    let lastStoredAidLost: boolean | null = null;
+    let lastStoredDoubleValue: number | null = null;
+
+    const monitorInterval = setInterval(async () => {
+      try {
+        if (!device.isConnected) {
+          console.warn("Device not connected. Stopping monitoring.");
+          clearInterval(monitorInterval);
+          return;
+        }
+
+        const services = await device.services();
+        for (const service of services) {
+          const characteristics = await service.characteristics();
+          for (const char of characteristics) {
+            // Reading the aidLost characteristic (boolean)
+            if (
+              char.uuid === "12345678-1234-5678-1234-56789abcdef1" &&
+              char.isReadable
+            ) {
+              const charValue = await char.read();
+              if (charValue.value) {
+                const boolValue =
+                  Buffer.from(charValue.value, "base64").readUInt8(0) === 1;
+
+                if (boolValue !== lastStoredAidLost) {
+                  lastStoredAidLost = boolValue;
+                  setAidLost(boolValue);
+                  console.log("🔹 Retrieved aidLost value:", boolValue);
+                  await AsyncStorage.setItem(
+                    "aidLost",
+                    JSON.stringify(boolValue)
+                  );
+                }
+              }
+            }
+
+            // Reading the distance characteristic (double)
+            if (
+              char.uuid === "12345678-1234-5678-1234-56789abcdef2" &&
+              char.isReadable
+            ) {
+              const charValue = await char.read();
+              if (charValue.value) {
+                const buffer = Buffer.from(charValue.value, "base64");
+
+                // Check if the buffer is large enough for a double (8 bytes)
+                if (buffer.length >= 8) {
+                  const doubleValue = buffer.readDoubleLE(0);
+
+                  if (doubleValue !== lastStoredDoubleValue) {
+                    lastStoredDoubleValue = doubleValue;
+                    console.log(
+                      "🔹 Value of the double UID retrieved:",
+                      doubleValue
+                    );
+                    await AsyncStorage.setItem(
+                      "doubleValue",
+                      JSON.stringify(doubleValue)
+                    );
+                  }
+                } else {
+                  console.warn(
+                    "⚠️ Insufficient buffer size for a double:",
+                    buffer.length
+                  );
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.warn("❌ Error while reading the data:", error);
+      }
+    }, 5000);
+  };
+
+  /* ##########################################################
+   ###########     PERMISSIONS     ###############
+   ########################################################## */
+
+  // Request necessary Bluetooth permissions on Android
+  const requestAndroidPermissions = async () => {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      ]);
+
+      if (
+        granted["android.permission.BLUETOOTH_SCAN"] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        granted["android.permission.BLUETOOTH_CONNECT"] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        granted["android.permission.ACCESS_FINE_LOCATION"] ===
+          PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        console.log("Bluetooth permissions granted");
+      } else {
+        Alert.alert(I18n.t("error"), I18n.t("permissionsDenied"));
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
+  /* ##########################################################
+   ###########     NOTIFICATION MANAGEMENT     ###############
+   ########################################################## */
+
+  // Configure the notification handler
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+
+  // Get the current time formatted
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+  // Send notification with location and time
+  const sendNotificationWithDetails = async (location: LocationType) => {
+    // Checks that notifications are enabled in the app settings
+    const notificationsSetting = await AsyncStorage.getItem(
+      "notificationsEnabled"
+    );
+    if (notificationsSetting !== "true") {
+      console.log("Notifications disabled, send cancelled.");
+      return;
+    }
+
+    const currentTime = getCurrentTime();
+    const notificationData = {
+      timestamp: currentTime,
+      latitude: location.latitude.toFixed(5),
+      longitude: location.longitude.toFixed(5),
+    };
+
+    // Retrieve old notifications
+    const storedNotifications = await AsyncStorage.getItem("notifications");
+    const notificationsArray = storedNotifications
+      ? JSON.parse(storedNotifications)
+      : [];
+
+    // Add new notification
+    notificationsArray.unshift(notificationData);
+
+    // Limit the history to 20 notifications maximum
+    if (notificationsArray.length > 20) {
+      notificationsArray.pop();
+    }
+
+    // Save to AsyncStorage
+    await AsyncStorage.setItem(
+      "notifications",
+      JSON.stringify(notificationsArray)
+    );
+
+    // Send notification
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: I18n.t("aidLostNotificationTitle"),
+        body: `${I18n.t("aidLostDetected")} ${currentTime} - ${I18n.t(
+          "latitude"
+        )}: ${notificationData.latitude}, ${I18n.t("longitude")}: ${
+          notificationData.longitude
+        }`,
+      },
+      trigger: null, // Immediate notification
+    });
+  };
+
+  // Check if the hearing aid is lost and send a notification
+  useEffect(() => {
+    const checkAidLost = async () => {
+      // Retrieving stored settings in AsyncStorage
+      const notificationsSetting = await AsyncStorage.getItem(
+        "notificationsEnabled"
+      );
+      const emailAlertSetting = await AsyncStorage.getItem("contactByEmail");
+      const userEmail = await AsyncStorage.getItem("profileEmail");
+
+      const storedValue = await AsyncStorage.getItem("aidLost"); // Current value
+      const lastState = await AsyncStorage.getItem("lastAidState"); // Last saved state
+      const lastNotification = await AsyncStorage.getItem(
+        "lastNotificationSent"
+      );
+      const lastEmailSent = await AsyncStorage.getItem("lastEmailSent");
+
+      // If "True" is detected and the previous state was "False", an alert is triggered
+      if (storedValue === "true" && lastState !== "true") {
+        console.log("📢 First 'True' detected, sending alerts...");
+
+        const location = await Location.getCurrentPositionAsync({});
+        const userLocation = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        };
+
+        // Sending a single notification if not sent yet
+        if (!lastNotification && notificationsSetting === "true") {
+          await sendNotificationWithDetails(userLocation);
+          await AsyncStorage.setItem("lastNotificationSent", "true");
+        }
+
+        // Sending a single email if enabled in settings and not already sent
+        if (!lastEmailSent && emailAlertSetting === "true" && userEmail) {
+          await sendEmailAlert(userEmail);
+          await AsyncStorage.setItem("lastEmailSent", "true");
+        }
+      }
+
+      // If "False" is detected, the alerts are reset
+      if (storedValue === "false" && lastState !== "false") {
+        console.log("✅ Hearing aid found, reset alerts.");
+        await AsyncStorage.removeItem("lastNotificationSent");
+        await AsyncStorage.removeItem("lastEmailSent");
+      }
+
+      // Update of the last known status
+      if (storedValue !== null) {
+        await AsyncStorage.setItem("lastAidState", storedValue);
+      }
+    };
+
+    const interval = setInterval(checkAidLost, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  /* ##########################################################
+   ###########     ASYNCSTORAGE     ###############
+   ########################################################## */
+
+  // Load the last connected Bluetooth device from AsyncStorage and attempts to reconnect
+  const loadStoredDevice = async () => {
+    try {
+      const deviceId = await AsyncStorage.getItem("connectedDevice");
+      if (deviceId) {
+        const device = await manager.connectToDevice(deviceId);
+        setConnectedDevice(device);
+        Alert.alert(
+          I18n.t("connected"),
+          `${I18n.t("connectedTo")} ${device.name}`
+        );
+
+        // Start reading aidLost status periodically
+        startAidLostMonitor(device);
+      }
+    } catch (error) {
+      console.error("Failed to load stored device:", error);
+      Alert.alert(I18n.t("error"), I18n.t("loadBluetoothError"));
+    }
+  };
+
+  // Request necessary Bluetooth permissions & loads the previously connected device from AsyncStorage
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      requestAndroidPermissions();
+    }
+    loadStoredDevice(); // Attempt to reconnect to the last connected device
+    return () => {
+      manager.stopDeviceScan(); // Stop any ongoing Bluetooth scans
+    };
+  }, []);
+
+  // Regular update of AsyncStorage avoiding differences between the stored state and the real state
   useEffect(() => {
     const monitorConnection = setInterval(async () => {
       if (connectedDevice) {
@@ -612,29 +627,34 @@ const DevicesPage = () => {
         if (!isConnected) {
           setConnectedDevice(null);
           await AsyncStorage.removeItem("connectedDevice");
-          console.warn("Connexion perdue. Mise à jour de l'état.");
+          console.warn("Connection lost. Status updated.");
         }
       }
-    }, 5000); // Vérification toutes les 5 secondes
+    }, 5000); // Every 5s
 
     return () => clearInterval(monitorConnection);
   }, [connectedDevice]);
 
-  // Redécouverte des services et caractéristiques lors de la reconnexion de la prothèse auditive
+  // Discover all services and characteristics of the connected Bluetooth device
   const discoverDeviceServices = async (device: Device) => {
     try {
       const services = await device.discoverAllServicesAndCharacteristics();
-      console.log("Services découverts:", services);
+      console.log("Discovered services:", services);
     } catch (error) {
-      console.error("Erreur lors de la découverte des services:", error);
+      console.error("Error during service discovery:", error);
     }
   };
 
+  // Discover automatically the available services and characteristics of the connected device
   useEffect(() => {
     if (connectedDevice) {
       discoverDeviceServices(connectedDevice);
     }
   }, [connectedDevice]);
+
+  /* ##########################################################
+   ###########       UI RENDERING       ##############
+   ########################################################## */
 
   return (
     <SafeAreaProvider>

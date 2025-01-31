@@ -11,9 +11,13 @@ import {
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { styles } from "./RelativesPage.style";
-import i18n from "../../constants/i18n";
+import i18n from "@/constants/i18n";
 
 export default function RelativesPage() {
+  /* ##########################################################
+   ###########    STATES & GLOBAL VARIABLES   ##############
+   ########################################################## */
+
   // State to store the list of relatives
   const [relatives, setRelatives] = useState<
     {
@@ -26,6 +30,7 @@ export default function RelativesPage() {
     }[]
   >([]);
 
+  // Type definition for a relative
   type Relative = {
     id: number;
     firstname: string;
@@ -57,12 +62,20 @@ export default function RelativesPage() {
     phone: false,
   });
 
+  /* ##########################################################
+   #############   VALIDATION FUNCTIONS   #################
+   ########################################################## */
+
   // Email validation function
   const validateEmail = (email: string): boolean =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   // Phone number validation function (digits only)
   const validatePhoneNumber = (phone: string): boolean => /^\d+$/.test(phone);
+
+  /* ##########################################################
+   ##########   ASYNCSTORAGE FUNCTIONS (LOAD & SAVE)   #########
+   ########################################################## */
 
   // Load relatives from AsyncStorage
   useEffect(() => {
@@ -80,7 +93,7 @@ export default function RelativesPage() {
     loadRelativesData();
   }, []);
 
-  // Save relatives to AsyncStorage
+  // Save relatives to AsyncStorage whenever the list changes
   const saveRelativesData = async (data: Relative[]) => {
     try {
       await AsyncStorage.setItem("relativesData", JSON.stringify(data));
@@ -92,6 +105,10 @@ export default function RelativesPage() {
   useEffect(() => {
     saveRelativesData(relatives);
   }, [relatives]);
+
+  /* ##########################################################
+   #############   HANDLER FUNCTIONS   #################
+   ########################################################## */
 
   // Function to handle adding a new relative
   const handleAddRelative = () => {
@@ -110,7 +127,7 @@ export default function RelativesPage() {
     });
   };
 
-  // Function to handle saving a relative
+  // Function to handle saving a relative (add or update)
   const handleSaveRelative = () => {
     if (!currentRelative) {
       return;
@@ -209,6 +226,10 @@ export default function RelativesPage() {
     }
     return text;
   };
+
+  /* ##########################################################
+   ##################   UI RENDERING   ##################
+   ########################################################## */
 
   return (
     <SafeAreaProvider>

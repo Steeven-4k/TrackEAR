@@ -118,7 +118,7 @@ export default function GeolocationPage() {
     }
   };
 
-  // Load data on component mount and get the user's current location
+  // Load data and get the user's current location
   useEffect(() => {
     getCurrentLocation();
   }, []);
@@ -139,8 +139,8 @@ export default function GeolocationPage() {
       locationSubscription = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
-          timeInterval: 2000, // Mettre à jour toutes les 2 secondes
-          distanceInterval: 1, // Optionnel : mise à jour si déplacement d'au moins 1 mètre
+          timeInterval: 2000,
+          distanceInterval: 1, // Update if moving at least 1 meter
         },
         (location) => {
           setCurrentLocation({
@@ -176,8 +176,8 @@ export default function GeolocationPage() {
         },
         {
           id: 2,
-          latitude: currentLocation.latitude + 0.0001, // Décalage en latitude
-          longitude: currentLocation.longitude + 0.0001, // Décalage en longitude
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
           title: "hearingAid2",
         },
       ]);
@@ -240,12 +240,12 @@ export default function GeolocationPage() {
           ...aid,
           latitude:
             isAidLost && aid.id === 1
-              ? newLostPosition.latitude
-              : currentLocation.latitude + (aid.id === 2 ? 0.0001 : 0),
+              ? newLostPosition?.latitude ?? currentLocation.latitude
+              : currentLocation.latitude,
           longitude:
             isAidLost && aid.id === 1
-              ? newLostPosition.longitude
-              : currentLocation.longitude + (aid.id === 2 ? 0.0001 : 0),
+              ? newLostPosition?.longitude ?? currentLocation.longitude
+              : currentLocation.longitude,
         }))
       );
     };
@@ -511,7 +511,7 @@ export default function GeolocationPage() {
                     )}`
                   : "Calcul en cours..."
               }
-              pinColor={aidLost && device.id === 1 ? "green" : "yellow"}
+              pinColor={aidLost && device.id === 1 ? "green" : "red"}
               onPress={() => {
                 setSelectedHearingAid(device);
               }}
