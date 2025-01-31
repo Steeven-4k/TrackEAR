@@ -1,0 +1,13 @@
+# Target labels
+ nrf_dm
+# Source files and their labels
+C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_1/_sysbuild/sysbuild/images/CMakeFiles/nrf_dm
+C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_1/_sysbuild/sysbuild/images/CMakeFiles/nrf_dm.rule
+C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_1/_sysbuild/sysbuild/images/CMakeFiles/nrf_dm-complete.rule
+C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_1/_sysbuild/sysbuild/images/nrf_dm-prefix/src/nrf_dm-stamp/nrf_dm-build.rule
+C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_1/_sysbuild/sysbuild/images/nrf_dm-prefix/src/nrf_dm-stamp/nrf_dm-configure.rule
+C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_1/_sysbuild/sysbuild/images/nrf_dm-prefix/src/nrf_dm-stamp/nrf_dm-download.rule
+C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_1/_sysbuild/sysbuild/images/nrf_dm-prefix/src/nrf_dm-stamp/nrf_dm-install.rule
+C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_1/_sysbuild/sysbuild/images/nrf_dm-prefix/src/nrf_dm-stamp/nrf_dm-mkdir.rule
+C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_1/_sysbuild/sysbuild/images/nrf_dm-prefix/src/nrf_dm-stamp/nrf_dm-patch.rule
+C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_1/_sysbuild/sysbuild/images/nrf_dm-prefix/src/nrf_dm-stamp/nrf_dm-update.rule
