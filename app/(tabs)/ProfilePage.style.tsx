@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Platform } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 
 // Get device screen width and height
 const { width, height } = Dimensions.get("window");
