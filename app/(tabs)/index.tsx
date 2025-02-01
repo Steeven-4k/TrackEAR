@@ -4,7 +4,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
 import { styles } from "./HomePage.style";
-import i18n from "../../constants/i18n";
+import i18n from "@/constants/i18n";
 
 export default function App() {
   const router = useRouter(); // Hook to navigate between pages

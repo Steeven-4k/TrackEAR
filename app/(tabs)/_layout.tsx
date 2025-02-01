@@ -11,7 +11,7 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-import I18n from "../../constants/i18n";
+import I18n from "@/constants/i18n";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();

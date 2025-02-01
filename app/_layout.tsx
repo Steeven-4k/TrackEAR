@@ -10,7 +10,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import i18n from "../constants/i18n";
+import i18n from "@/constants/i18n";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 
@@ -47,13 +47,23 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
-        {/* Onglets principaux */}
+        {/* Main Pages */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
         {/* Page Settings */}
         <Stack.Screen
           name="SettingsPage"
-          options={{ title: "Settings", headerShown: false }}
+          options={{ title: i18n.t("settings"), headerShown: false }}
+        />
+
+        {/* Page History */}
+        <Stack.Screen
+          name="HistoryPage"
+          options={{
+            title: i18n.t("historic"),
+            headerShown: true,
+            headerBackTitle: i18n.t("goBack"),
+          }}
         />
         {/* Page Not Found */}
         <Stack.Screen name="+not-found" />

@@ -10,6 +10,7 @@ I18n.translations = {
     relativesTab: "Relatives",
     devicesTab: "Devices",
     profileTab: "Profile",
+    fallbackMessage: "Translation not available",
 
     // Home Page
     homeTitle: "Find the sound, wherever it is",
@@ -18,7 +19,6 @@ I18n.translations = {
 
     // Geolocation Page
     locationPermissionDenied: "Permission to access location was denied.",
-    noMarkersAvailable: "No markers available to center on.",
     centerOnMe: "Center on Me",
     centerOnAids: "Center on Aids",
     yourLocation: "Your Location",
@@ -29,6 +29,8 @@ I18n.translations = {
     selectHearingAid: "Select Hearing Aid",
     chooseAidToCenter: "Choose which hearing aid to center on.",
     openSettings: "Open Settings",
+    loading: "Loading...",
+    foundAid: "Hearing aid found",
 
     // Relatives Page
     relativesPageTitle: "Contacts To Alert",
@@ -62,18 +64,64 @@ I18n.translations = {
     success: "Success",
 
     // Devices Page
-    devicesPageTitle: "Connect Your Hearing Aids",
+    devicesPageTitle: "Connect Your Hearing Devices",
     addDeviceButton: "Add a device",
-    deviceConnectedAlertTitle: "Device Connected",
-    deviceConnectedAlertMessage: "Your device is now connected!",
-    forgetDeviceAlertTitle: "Forget Device",
+    deviceConnectedAlertTitle: "Device connected",
+    forgetDeviceAlertTitle: "Forget device",
     forgetDeviceAlertMessage: "Are you sure you want to forget this device?",
     forgetDeviceConfirm: "Yes",
     forgetDeviceCancel: "Cancel",
-    deviceInfoTitle: "Device Info",
-    currentLocation: "Current Location",
-    forgetDeviceButton: "Forget the device",
+    forgetDeviceButton: "Forget device",
     close: "Close",
+    unknownDevice: "Unknown device",
+    noDevicesFound: "No devices connected.",
+    scanning: "Scanning...",
+    noDevicesMessage:
+      "Make sure your Bluetooth device is in pairing mode and try again.",
+    bluetoothDevices: "Bluetooth Devices",
+    connectedTo: "Connected to",
+    error: "Error",
+    scanError: "Scan failed",
+    connectionFailed: "Connection failed",
+    tryAgain: "Please try again",
+    connected: "Connected",
+    disconnected: "Device successfully disconnected",
+    disconnectFailed: "Disconnection failed",
+    loadBluetoothError:
+      "Unable to reconnect to your device. Please check your Bluetooth connection.",
+    permissionsDenied:
+      "Bluetooth permissions were denied. Please enable them in settings.",
+    aidLostNotificationTitle: "Hearing Aid Lost!",
+    aidLostDetected: "Loss detected at",
+    latitude: "Latitude",
+    longitude: "Longitude",
+    emailSubjectUser: "Important: Your hearing aid might be lost",
+    emailBodyUser: `
+      Dear user,
+
+      We detected that your hearing aid might have been misplaced. 
+      Don't worry, you can check its last known location using the TrackEAR app.
+
+      Stay calm and follow the steps provided in the application to retrieve your device.
+
+      If you have any questions, feel free to contact our support team.
+
+      Best regards,
+      The TrackEAR Team
+    `,
+
+    emailSubjectRelatives: "Alert: A hearing aid has been lost",
+    emailBodyRelatives: `
+      Dear relative,
+
+      The user you are connected with via the TrackEAR app has lost their hearing aid.
+      Please assist them in retrieving their device.
+
+      You can check their last known location via the TrackEAR app.
+
+      Best regards,
+      The TrackEAR Team
+    `,
 
     // Profile Page
     email: "Email",
@@ -81,7 +129,7 @@ I18n.translations = {
     enterName: "Enter your name",
     enterEmail: "Enter your email",
     enterPhone: "Enter your phone number",
-    historic: "Historic",
+    historic: "History",
     settings: "Settings",
     error: "Error",
     invalidEmail: "Invalid email format.",
@@ -93,6 +141,15 @@ I18n.translations = {
     nameRequired: "Name is required.",
     editingMode: "You are in editing mode",
 
+    // History Page
+    historyPageTitle: "Notification History",
+    deleteNotification: "Delete",
+    deleteConfirmation: "Do you really want to delete this notification?",
+    clearAllNotifications: "Clear All Notifications",
+    clearAllConfirmation: "Do you really want to delete all notifications?",
+    noNotifications: "No notifications available.",
+    goBack: "Back",
+
     // Settings Page
     settingsTitle: "SETTINGS",
     enableNotifications: "Enable Notifications",
@@ -101,7 +158,6 @@ I18n.translations = {
     contactByEmail: "Contact by Email",
     contactByPhone: "Contact by Phone",
     language: "Language",
-    goBack: "Go Back",
     hintText:
       "Choose how you prefer to be contacted in case of loss: by email or phone.",
     notificationPermissionDenied: "Permission denied to show notifications.",
@@ -115,6 +171,7 @@ I18n.translations = {
     relativesTab: "Contacts",
     devicesTab: "Appareils",
     profileTab: "Profil",
+    fallbackMessage: "Traduction non disponible",
 
     // Home Page
     homeTitle: "Trouvez le son, où qu'il soit",
@@ -123,7 +180,6 @@ I18n.translations = {
 
     // Geolocation Page
     locationPermissionDenied: "Permission de localisation refusée.",
-    noMarkersAvailable: "Aucun marqueur disponible.",
     centerOnMe: "Centrer sur moi",
     centerOnAids: "Centrer sur l'aide",
     yourLocation: "Votre Position",
@@ -134,6 +190,8 @@ I18n.translations = {
     selectHearingAid: "Sélectionnez une aide auditive",
     chooseAidToCenter: "Choisissez quelle aide auditive recentrer.",
     openSettings: "Ouvrir les paramètres",
+    loading: "Chargement...",
+    foundAid: "Prothèse retrouvée",
 
     // Relatives Page
     relativesPageTitle: "Contacts À Alerter",
@@ -169,16 +227,63 @@ I18n.translations = {
     // Devices Page
     devicesPageTitle: "Connectez Vos Appareils Auditifs",
     addDeviceButton: "Ajouter un appareil",
-    deviceConnectedAlertTitle: "Appareil connecté",
-    deviceConnectedAlertMessage: "Votre appareil est maintenant connecté !",
+    deviceConnectedAlertTitle: "Appareil Connecté",
     forgetDeviceAlertTitle: "Oublier l'appareil",
-    forgetDeviceAlertMessage: "Êtes-vous sûr de vouloir oublier cet appareil ?",
+    forgetDeviceAlertMessage: "Êtes-vous sûr de vouloir oublier cet appareil ?",
     forgetDeviceConfirm: "Oui",
     forgetDeviceCancel: "Annuler",
-    deviceInfoTitle: "Informations sur l'appareil",
-    currentLocation: "Localisation actuelle",
     forgetDeviceButton: "Oublier l'appareil",
     close: "Fermer",
+    unknownDevice: "Appareil inconnu",
+    noDevicesFound: "Aucun appareil connecté.",
+    scanning: "Scan en cours...",
+    noDevicesMessage:
+      "Assurez-vous que votre appareil Bluetooth est en mode de couplage et réessayez.",
+    bluetoothDevices: "Appareils Bluetooth",
+    connectedTo: "Connecté à",
+    error: "Erreur",
+    scanError: "Échec du scan",
+    connectionFailed: "Échec de la connexion",
+    tryAgain: "Veuillez réessayer.",
+    connected: "Connecté",
+    disconnected: "Appareil déconnecté avec succès.",
+    disconnectFailed: "Échec de la déconnexion.",
+    loadBluetoothError:
+      "Impossible de se reconnecter à votre appareil. Veuillez vérifier votre connexion Bluetooth.",
+    permissionsDenied:
+      "Les autorisations Bluetooth ont été refusées. Veuillez les activer dans les paramètres.",
+    aidLostNotificationTitle: "Prothèse Perdue !",
+    aidLostDetected: "Perte détectée à",
+    latitude: "Latitude",
+    longitude: "Longitude",
+    emailSubjectUser:
+      "Important : Votre prothèse auditive pourrait être perdue",
+    emailBodyUser: `
+      Cher utilisateur,
+
+      Nous avons détecté que votre prothèse auditive pourrait avoir été égarée. 
+      Pas d’inquiétude, vous pouvez vérifier sa dernière position connue via l’application TrackEAR.
+
+      Restez serein et suivez les étapes indiquées dans l’application pour retrouver votre appareil.
+
+      Pour toute question, n’hésitez pas à contacter notre support.
+
+      Cordialement,
+      L'équipe TrackEAR
+    `,
+
+    emailSubjectRelatives: "Alerte : Une prothèse auditive a été perdue",
+    emailBodyRelatives: `
+      Cher proche,
+
+      L'utilisateur avec lequel vous êtes connecté via l’application TrackEAR a perdu sa prothèse auditive.
+      Merci de l’assister pour retrouver son appareil.
+
+      Vous pouvez vérifier sa dernière position connue via l’application TrackEAR.
+
+      Cordialement,
+      L'équipe TrackEAR
+    `,
 
     // Profile Page
     email: "Email",
@@ -200,6 +305,16 @@ I18n.translations = {
     nameRequired: "Le nom est requis.",
     editingMode: "Vous êtes en mode édition",
 
+    // History Page
+    historyPageTitle: "Historique des Notifications",
+    deleteNotification: "Supprimer",
+    deleteConfirmation: "Voulez-vous vraiment supprimer cette notification ?",
+    clearAllNotifications: "Tout supprimer",
+    clearAllConfirmation:
+      "Voulez-vous vraiment supprimer toutes les notifications ?",
+    noNotifications: "Aucune notification disponible.",
+    goBack: "Retour",
+
     // Settings Page
     settingsTitle: "PARAMÈTRES",
     enableNotifications: "Activer les notifications",
@@ -208,7 +323,6 @@ I18n.translations = {
     contactByEmail: "Contact par email",
     contactByPhone: "Contact par téléphone",
     language: "Langue",
-    goBack: "Retour",
     hintText:
       "Choisissez comment vous préférez être contacté(e) en cas de perte : par email ou téléphone.",
     notificationPermissionDenied:
@@ -223,6 +337,7 @@ I18n.translations = {
     relativesTab: "Contactos",
     devicesTab: "Dispositivos",
     profileTab: "Perfil",
+    fallbackMessage: "Traducción no disponible",
 
     // Home Page
     homeTitle: "Encuentra el sonido, donde sea que esté",
@@ -231,7 +346,6 @@ I18n.translations = {
 
     // Geolocation Page
     locationPermissionDenied: "Permiso de ubicación denegado.",
-    noMarkersAvailable: "No hay marcadores disponibles.",
     centerOnMe: "Centrar en mí",
     centerOnAids: "Centrar en la ayuda",
     yourLocation: "Tu Ubicación",
@@ -242,6 +356,8 @@ I18n.translations = {
     selectHearingAid: "Seleccionar audífono",
     chooseAidToCenter: "Elija qué audífono centrar.",
     openSettings: "Abrir configuración",
+    loading: "Cargando...",
+    foundAid: "Audífono encontrado",
 
     // Relatives Page
     relativesPageTitle: "Contactos Para Alertar",
@@ -275,19 +391,52 @@ I18n.translations = {
     success: "Éxito",
 
     // Devices Page
-    devicesPageTitle: "Conecta Tus Audífonos",
+    devicesPageTitle: "Conecta tus dispositivos auditivos",
     addDeviceButton: "Agregar un dispositivo",
     deviceConnectedAlertTitle: "Dispositivo conectado",
-    deviceConnectedAlertMessage: "¡Tu dispositivo ahora está conectado!",
     forgetDeviceAlertTitle: "Olvidar dispositivo",
     forgetDeviceAlertMessage:
-      "¿Estás seguro de que deseas olvidar este dispositivo?",
+      "¿Estás seguro de que quieres olvidar este dispositivo?",
     forgetDeviceConfirm: "Sí",
     forgetDeviceCancel: "Cancelar",
-    deviceInfoTitle: "Información del dispositivo",
-    currentLocation: "Ubicación actual",
     forgetDeviceButton: "Olvidar dispositivo",
     close: "Cerrar",
+    unknownDevice: "Dispositivo desconocido",
+    noDevicesFound: "Ningún dispositivo conectado.",
+    scanning: "Escaneando...",
+    noDevicesMessage:
+      "Asegúrese de que su dispositivo Bluetooth esté en modo de emparejamiento y vuelva a intentarlo.",
+    bluetoothDevices: "Dispositivos Bluetooth",
+    connectedTo: "Conectado a",
+    error: "Error",
+    scanError: "Error de escaneo",
+    connectionFailed: "Error de conexión",
+    tryAgain: "Por favor, inténtelo de nuevo",
+    connected: "Conectado",
+    disconnected: "Dispositivo desconectado con éxito",
+    disconnectFailed: "Error al desconectar",
+    loadBluetoothError:
+      "No se puede volver a conectar con su dispositivo. Por favor, verifique su conexión Bluetooth.",
+    permissionsDenied:
+      "Se denegaron los permisos de Bluetooth. Habilítelos en la configuración.",
+    aidLostNotificationTitle: "¡Audífono Perdido!",
+    aidLostDetected: "Pérdida detectada a las",
+    latitude: "Latitud",
+    longitude: "Longitud",
+    emailSubject: "Importante: Su audífono podría estar perdido",
+    emailBody: `
+      Estimado usuario,
+
+      Hemos detectado que su audífono podría haberse extraviado. 
+      No se preocupe, puede verificar su última ubicación conocida a través de la aplicación TrackEAR.
+
+      Mantenga la calma y siga los pasos indicados en la aplicación para recuperar su dispositivo.
+
+      Si tiene alguna pregunta, no dude en contactar con nuestro equipo de soporte.
+
+      Atentamente,
+      El equipo de TrackEAR
+    `,
 
     // Profile Page
     email: "Correo electrónico",
@@ -308,6 +457,16 @@ I18n.translations = {
       "Permiso denegado para acceder a la biblioteca de imágenes.",
     editingMode: "Estás en modo de edición",
 
+    // History Page
+    historyPageTitle: "Historial de Notificaciones",
+    deleteNotification: "Eliminar",
+    deleteConfirmation: "¿Realmente deseas eliminar esta notificación?",
+    clearAllNotifications: "Eliminar todo",
+    clearAllConfirmation:
+      "¿Realmente deseas eliminar todas las notificaciones?",
+    noNotifications: "No hay notificaciones disponibles.",
+    goBack: "Volver",
+
     // Settings Page
     settingsTitle: "AJUSTES",
     enableNotifications: "Activar notificaciones",
@@ -316,7 +475,6 @@ I18n.translations = {
     contactByEmail: "Contacto por correo electrónico",
     contactByPhone: "Contacto por teléfono",
     language: "Idioma",
-    goBack: "Volver",
     hintText:
       "Elija cómo prefiere ser contactado en caso de pérdida: por correo electrónico o teléfono.",
     notificationPermissionDenied:
@@ -331,6 +489,7 @@ I18n.translations = {
     relativesTab: "Kontakte",
     devicesTab: "Geräte",
     profileTab: "Profil",
+    fallbackMessage: "Übersetzung nicht verfügbar",
 
     // Home Page
     homeTitle: "Finden Sie den Klang, wo auch immer er ist",
@@ -339,7 +498,6 @@ I18n.translations = {
 
     // Geolocation Page
     locationPermissionDenied: "Standorterlaubnis verweigert.",
-    noMarkersAvailable: "Keine Markierungen verfügbar.",
     centerOnMe: "Auf mich zentrieren",
     centerOnAids: "Auf Hörhilfe zentrieren",
     yourLocation: "Ihr Standort",
@@ -350,6 +508,8 @@ I18n.translations = {
     selectHearingAid: "Hörgerät auswählen",
     chooseAidToCenter: "Wählen Sie, welches Hörgerät zentriert werden soll.",
     openSettings: "Einstellungen öffnen",
+    loading: "Laden...",
+    foundAid: "Hörgerät gefunden",
 
     // Relatives Page
     relativesPageTitle: "Kontakte Zum Benachrichtigen",
@@ -384,18 +544,52 @@ I18n.translations = {
     success: "Erfolg",
 
     // Devices Page
-    devicesPageTitle: "Verbinden Sie Ihre Hörgeräte",
-    addDeviceButton: "Ein Gerät hinzufügen",
+    devicesPageTitle: "Verbinde deine Hörgeräte",
+    addDeviceButton: "Gerät hinzufügen",
     deviceConnectedAlertTitle: "Gerät verbunden",
-    deviceConnectedAlertMessage: "Ihr Gerät ist jetzt verbunden!",
     forgetDeviceAlertTitle: "Gerät vergessen",
-    forgetDeviceAlertMessage: "Möchten Sie dieses Gerät wirklich vergessen?",
+    forgetDeviceAlertMessage:
+      "Sind Sie sicher, dass Sie dieses Gerät vergessen möchten?",
     forgetDeviceConfirm: "Ja",
     forgetDeviceCancel: "Abbrechen",
-    deviceInfoTitle: "Geräteinformationen",
-    currentLocation: "Aktueller Standort",
     forgetDeviceButton: "Gerät vergessen",
     close: "Schließen",
+    unknownDevice: "Unbekanntes Gerät",
+    noDevicesFound: "Keine Geräte verbunden.",
+    scanning: "Scannen läuft...",
+    noDevicesMessage:
+      "Stellen Sie sicher, dass sich Ihr Bluetooth-Gerät im Kopplungsmodus befindet, und versuchen Sie es erneut.",
+    bluetoothDevices: "Bluetooth-Geräte",
+    connectedTo: "Verbunden mit",
+    error: "Fehler",
+    scanError: "Scan fehlgeschlagen",
+    connectionFailed: "Verbindung fehlgeschlagen",
+    tryAgain: "Bitte versuchen Sie es erneut",
+    connected: "Verbunden",
+    disconnected: "Gerät erfolgreich getrennt",
+    disconnectFailed: "Trennung fehlgeschlagen",
+    loadBluetoothError:
+      "Es kann keine Verbindung zu Ihrem Gerät hergestellt werden. Bitte überprüfen Sie Ihre Bluetooth-Verbindung.",
+    permissionsDenied:
+      "Bluetooth-Berechtigungen wurden verweigert. Bitte aktivieren Sie sie in den Einstellungen.",
+    aidLostNotificationTitle: "Hörgerät verloren!",
+    aidLostDetected: "Verlust festgestellt um",
+    latitude: "Breite",
+    longitude: "Länge",
+    emailSubject: "Wichtig: Ihr Hörgerät könnte verloren gegangen sein",
+    emailBody: `
+      Sehr geehrter Nutzer,
+
+      Wir haben festgestellt, dass Ihr Hörgerät möglicherweise verlegt wurde. 
+      Keine Sorge, Sie können den letzten bekannten Standort in der TrackEAR-App überprüfen.
+
+      Bleiben Sie ruhig und folgen Sie den Anweisungen in der App, um Ihr Gerät wiederzufinden.
+
+      Wenn Sie Fragen haben, können Sie sich jederzeit an unser Support-Team wenden.
+
+      Mit freundlichen Grüßen,
+      Das TrackEAR-Team
+    `,
 
     // Profile Page
     email: "E-Mail",
@@ -415,6 +609,16 @@ I18n.translations = {
     permissionDenied: "Zugriff auf die Bilderbibliothek verweigert.",
     editingMode: "Sie befinden sich im Bearbeitungsmodus",
 
+    // History Page
+    historyPageTitle: "Benachrichtigungsverlauf",
+    deleteNotification: "Löschen",
+    deleteConfirmation: "Möchten Sie diese Benachrichtigung wirklich löschen?",
+    clearAllNotifications: "Alles löschen",
+    clearAllConfirmation:
+      "Möchten Sie wirklich alle Benachrichtigungen löschen?",
+    noNotifications: "Keine Benachrichtigungen verfügbar.",
+    goBack: "Zurück",
+
     // Settings Page
     settingsTitle: "EINSTELLUNGEN",
     enableNotifications: "Benachrichtigungen aktivieren",
@@ -423,7 +627,6 @@ I18n.translations = {
     contactByEmail: "Kontakt per E-Mail",
     contactByPhone: "Kontakt per Telefon",
     language: "Sprache",
-    goBack: "Zurück",
     hintText:
       "Wählen Sie, wie Sie im Verlustfall kontaktiert werden möchten: per E-Mail oder Telefon.",
     notificationPermissionDenied:
@@ -438,6 +641,7 @@ I18n.translations = {
     relativesTab: "Contatti",
     devicesTab: "Dispositivi",
     profileTab: "Profilo",
+    fallbackMessage: "Traduzione non disponibile",
 
     // Home Page
     homeTitle: "Trova il suono, ovunque sia",
@@ -446,7 +650,6 @@ I18n.translations = {
 
     // Geolocation Page
     locationPermissionDenied: "Permesso di posizione negato.",
-    noMarkersAvailable: "Nessun marcatore disponibile.",
     centerOnMe: "Centra su di me",
     centerOnAids: "Centra sull'aiuto",
     yourLocation: "La tua posizione",
@@ -457,6 +660,8 @@ I18n.translations = {
     selectHearingAid: "Seleziona apparecchio acustico",
     chooseAidToCenter: "Scegli quale apparecchio acustico centrare.",
     openSettings: "Apri impostazioni",
+    loading: "Caricamento...",
+    foundAid: "Apparecchio acustico trovato",
 
     // Relatives Page
     relativesPageTitle: "Contatti Da Avvisare",
@@ -490,19 +695,53 @@ I18n.translations = {
     success: "Successo",
 
     // Devices Page
-    devicesPageTitle: "Collega I Tuoi Apparecchi Acustici",
+    devicesPageTitle: "Collega i tuoi apparecchi acustici",
     addDeviceButton: "Aggiungi un dispositivo",
     deviceConnectedAlertTitle: "Dispositivo connesso",
-    deviceConnectedAlertMessage: "Il tuo dispositivo è ora connesso!",
     forgetDeviceAlertTitle: "Dimentica dispositivo",
     forgetDeviceAlertMessage:
       "Sei sicuro di voler dimenticare questo dispositivo?",
     forgetDeviceConfirm: "Sì",
     forgetDeviceCancel: "Annulla",
-    deviceInfoTitle: "Informazioni sul dispositivo",
-    currentLocation: "Posizione attuale",
     forgetDeviceButton: "Dimentica dispositivo",
-    close: "Chiudere",
+    close: "Chiudi",
+    unknownDevice: "Dispositivo sconosciuto",
+    noDevicesFound: "Nessun dispositivo connesso.",
+    scanning: "Scansione in corso...",
+    noDevicesMessage:
+      "Assicurati che il tuo dispositivo Bluetooth sia in modalità di associazione e riprova.",
+    bluetoothDevices: "Dispositivi Bluetooth",
+    connectedTo: "Connesso a",
+    error: "Errore",
+    scanError: "Scansione fallita",
+    connectionFailed: "Connessione fallita",
+    tryAgain: "Riprova per favore",
+    connected: "Connesso",
+    disconnected: "Dispositivo disconnesso con successo",
+    disconnectFailed: "Disconnessione fallita",
+    loadBluetoothError:
+      "Impossibile riconnettersi al dispositivo. Controlla la tua connessione Bluetooth.",
+    permissionsDenied:
+      "Le autorizzazioni Bluetooth sono state negate. Abilitarle nelle impostazioni.",
+    aidLostNotificationTitle: "Apparecchio acustico perso!",
+    aidLostDetected: "Perdita rilevata alle",
+    latitude: "Latitudine",
+    longitude: "Longitudine",
+    emailSubject:
+      "Importante: Il tuo apparecchio acustico potrebbe essere smarrito",
+    emailBody: `
+      Caro utente,
+
+      Abbiamo rilevato che il tuo apparecchio acustico potrebbe essere stato smarrito. 
+      Non preoccuparti, puoi controllare la sua ultima posizione conosciuta tramite l'app TrackEAR.
+
+      Rimani calmo e segui i passaggi indicati nell'app per recuperare il tuo dispositivo.
+
+      Se hai domande, non esitare a contattare il nostro team di supporto.
+
+      Cordiali saluti,
+      Il team TrackEAR
+    `,
 
     // Profile Page
     email: "Email",
@@ -522,6 +761,15 @@ I18n.translations = {
     permissionDenied: "Permesso negato per accedere alla libreria di immagini.",
     editingMode: "Sei in modalità di modifica",
 
+    // History Page
+    historyPageTitle: "Storico delle Notifiche",
+    deleteNotification: "Elimina",
+    deleteConfirmation: "Vuoi davvero eliminare questa notifica?",
+    clearAllNotifications: "Elimina tutto",
+    clearAllConfirmation: "Vuoi davvero eliminare tutte le notifiche?",
+    noNotifications: "Nessuna notifica disponibile.",
+    goBack: "Torna indietro",
+
     // Settings Page
     settingsTitle: "IMPOSTAZIONI",
     enableNotifications: "Attiva notifiche",
@@ -530,7 +778,6 @@ I18n.translations = {
     contactByEmail: "Contatto via email",
     contactByPhone: "Contatto telefonico",
     language: "Lingua",
-    goBack: "Torna indietro",
     hintText:
       "Scegli come preferisci essere contattato in caso di smarrimento: tramite email o telefono.",
     notificationPermissionDenied:

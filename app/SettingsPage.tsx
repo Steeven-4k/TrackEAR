@@ -17,17 +17,31 @@ import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications";
 
 import { styles } from "./SettingsPage.style";
-import i18n from "../constants/i18n";
+import i18n from "@/constants/i18n";
 
 export default function SettingsPage() {
-  const router = useRouter(); // Router for navigation
+  const router = useRouter(); // Hook to navigate between pages
 
-  // States for various settings
+  /* ##########################################################
+   ###########    STATES & GLOBAL VARIABLES   ##############
+   ########################################################## */
+
+  // State to track whether notifications are enabled or disabled
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
+  // State to track whether vibration is enabled or disabled
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
+
+  // State to control whether the user prefers to be contacted via email
   const [contactByEmail, setContactByEmail] = useState(true);
+
+  // State to control whether the user prefers to be contacted via phone
   const [contactByPhone, setContactByPhone] = useState(true);
+
+  // State to manage the visibility of the language selection modal
   const [isModalVisible, setModalVisible] = useState(false);
+
+  // State to store the currently selected language
   const [selectedLanguage, setSelectedLanguage] = useState("en");
 
   // Available languages
@@ -39,7 +53,11 @@ export default function SettingsPage() {
     { label: "Italiano", value: "it", flag: "🇮🇹" },
   ];
 
-  // Load the saved language preference
+  /* ##########################################################
+   ##########   ASYNCSTORAGE FUNCTIONS (LOAD & SAVE)   #########
+   ########################################################## */
+
+  // Load the user's preferred language from AsyncStorage
   useEffect(() => {
     const loadLanguage = async () => {
       const savedLanguage = await AsyncStorage.getItem("selectedLanguage");
@@ -51,7 +69,7 @@ export default function SettingsPage() {
     loadLanguage();
   }, []);
 
-  // Check notification permissions
+  // Check the user's notification permission status
   useEffect(() => {
     const checkNotificationPermission = async () => {
       const { status } = await Notifications.getPermissionsAsync();
@@ -64,20 +82,34 @@ export default function SettingsPage() {
     checkNotificationPermission();
   }, []);
 
-  // Load saved notification settings
+  // Load user settings (notifications, vibration, contact preferences) from AsyncStorage
   useEffect(() => {
-    const loadNotificationSettings = async () => {
-      const savedNotifications = await AsyncStorage.getItem(
-        "notificationsEnabled"
-      );
-      if (savedNotifications !== null) {
-        setNotificationsEnabled(JSON.parse(savedNotifications));
+    const loadSettings = async () => {
+      try {
+        const settings = await AsyncStorage.multiGet([
+          "notificationsEnabled",
+          "vibrationEnabled",
+          "contactByEmail",
+          "contactByPhone",
+        ]);
+
+        setNotificationsEnabled(JSON.parse(settings[0][1] ?? "false"));
+        setVibrationEnabled(JSON.parse(settings[1][1] ?? "true"));
+        setContactByEmail(JSON.parse(settings[2][1] ?? "true"));
+        setContactByPhone(JSON.parse(settings[3][1] ?? "true"));
+      } catch (error) {
+        console.error("Error loading parameters:", error);
       }
     };
-    loadNotificationSettings();
+
+    loadSettings();
   }, []);
 
-  // Function to handle notification permission request
+  /* ##########################################################
+   #############   HANDLER FUNCTIONS   #################
+   ########################################################## */
+
+  // Handle toggling notification settings
   const handleNotificationToggle = async (value: boolean) => {
     if (value) {
       const { status } = await Notifications.requestPermissionsAsync();
@@ -103,6 +135,10 @@ export default function SettingsPage() {
           ]
         );
         setNotificationsEnabled(false);
+        await AsyncStorage.setItem(
+          "notificationsEnabled",
+          JSON.stringify(value)
+        );
         return;
       }
       Alert.alert(
@@ -114,6 +150,24 @@ export default function SettingsPage() {
     await AsyncStorage.setItem("notificationsEnabled", JSON.stringify(value));
   };
 
+  // Handle toggling the vibration setting
+  const handleVibrationToggle = async (value: boolean) => {
+    setVibrationEnabled(value);
+    await AsyncStorage.setItem("vibrationEnabled", JSON.stringify(value));
+  };
+
+  // Handle toggling the email contact preference
+  const handleEmailToggle = async (value: boolean) => {
+    setContactByEmail(value);
+    await AsyncStorage.setItem("contactByEmail", JSON.stringify(value));
+  };
+
+  // Handle toggling the phone contact preference
+  const handlePhoneToggle = async (value: boolean) => {
+    setContactByPhone(value);
+    await AsyncStorage.setItem("contactByPhone", JSON.stringify(value));
+  };
+
   // Function to change the app's language
   const changeLanguage = async (lang: string) => {
     i18n.locale = lang; // Update i18n locale
@@ -121,6 +175,18 @@ export default function SettingsPage() {
     await AsyncStorage.setItem("selectedLanguage", lang); // Persist language selection
     setModalVisible(false); // Close modal after selection
   };
+
+  useEffect(() => {
+    console.log("Current status of parameters:");
+    console.log("Notifications:", notificationsEnabled);
+    console.log("Vibration:", vibrationEnabled);
+    console.log("Contact Email:", contactByEmail);
+    console.log("Contact Téléphone:", contactByPhone);
+  }, [notificationsEnabled, vibrationEnabled, contactByEmail, contactByPhone]);
+
+  /* ##########################################################
+   ##################   UI RENDERING   ##################
+   ########################################################## */
 
   return (
     <SafeAreaProvider>
@@ -140,7 +206,7 @@ export default function SettingsPage() {
             <Text style={styles.label}>{i18n.t("enableNotifications")}</Text>
             <Switch
               value={notificationsEnabled}
-              onValueChange={(value) => handleNotificationToggle(value)}
+              onValueChange={handleNotificationToggle}
             />
           </View>
 
@@ -149,7 +215,7 @@ export default function SettingsPage() {
             <Text style={styles.label}>{i18n.t("enableVibration")}</Text>
             <Switch
               value={vibrationEnabled}
-              onValueChange={(value) => setVibrationEnabled(value)}
+              onValueChange={handleVibrationToggle}
             />
           </View>
 
@@ -169,17 +235,11 @@ export default function SettingsPage() {
           </View>
           <View style={styles.settingRow}>
             <Text style={styles.label}>{i18n.t("contactByEmail")}</Text>
-            <Switch
-              value={contactByEmail}
-              onValueChange={(value) => setContactByEmail(value)}
-            />
+            <Switch value={contactByEmail} onValueChange={handleEmailToggle} />
           </View>
           <View style={styles.settingRow}>
             <Text style={styles.label}>{i18n.t("contactByPhone")}</Text>
-            <Switch
-              value={contactByPhone}
-              onValueChange={(value) => setContactByPhone(value)}
-            />
+            <Switch value={contactByPhone} onValueChange={handlePhoneToggle} />
           </View>
 
           {/* Language Selection */}

@@ -13,12 +13,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 
 import { styles } from "./ProfilePage.style";
-import i18n from "../../constants/i18n";
+import i18n from "@/constants/i18n";
 
 export default function ProfilePage() {
   const router = useRouter(); // Hook to navigate between pages
 
-  // State variables to handle user data and UI interactions
+  /* ##########################################################
+   ###########    STATES & GLOBAL VARIABLES   ##############
+   ########################################################## */
+
+  // User information states
   const [name, setName] = useState("Firstname LASTNAME");
   const [email, setEmail] = useState("your-mail@address.com");
   const [phone, setPhone] = useState("XXXXXXXXXX");
@@ -36,12 +40,30 @@ export default function ProfilePage() {
   const [emailError, setEmailError] = useState<string | boolean>(false);
   const [phoneError, setPhoneError] = useState<string | boolean>(false);
 
-  // Validation functions for email and phone number inputs
+  /* ##########################################################
+   #############   VALIDATION FUNCTIONS   #################
+   ########################################################## */
+
+  // Validate email format
   const validateEmail = (email: string): boolean =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  // Validate phone number (digits only)
   const validatePhoneNumber = (phone: string): boolean => /^\d+$/.test(phone);
 
-  // Load saved profile data from local storage
+  /* ##########################################################
+   ##########   ASYNCSTORAGE FUNCTIONS (LOAD & SAVE)   #########
+   ########################################################## */
+
+  // Save email data to AsyncStorage
+  useEffect(() => {
+    const saveEmailToStorage = async () => {
+      await AsyncStorage.setItem("profileEmail", email);
+    };
+    saveEmailToStorage();
+  }, [email]);
+
+  // Load profile data from AsyncStorage
   useEffect(() => {
     const loadProfileData = async () => {
       try {
@@ -60,7 +82,7 @@ export default function ProfilePage() {
     loadProfileData();
   }, [i18n.locale]); // Reload data when the language changes
 
-  // Save the current profile data to local storage
+  // Save the current profile data to AsyncStorage
   const saveProfileData = async () => {
     try {
       await AsyncStorage.setItem(
@@ -72,7 +94,11 @@ export default function ProfilePage() {
     }
   };
 
-  // Function to handle form validation and saving
+  /* ##########################################################
+   #############   HANDLER FUNCTIONS   #################
+   ########################################################## */
+
+  // Handle form validation and saving
   const handleSave = async () => {
     let hasError = false;
 
@@ -117,13 +143,13 @@ export default function ProfilePage() {
     Alert.alert(i18n.t("success"), i18n.t("profileUpdated"));
   };
 
-  // Open the image picker to select an avatar
+  // Pick an image from the gallery
   const pickImage = async () => {
     if (isEditing) {
       const permissionResult =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (permissionResult.granted === false) {
-        Alert.alert(i18n.t("permissionDenied")); // Permission error
+        Alert.alert(i18n.t("permissionDenied"));
         return;
       }
 
@@ -140,7 +166,7 @@ export default function ProfilePage() {
     }
   };
 
-  // Handle canceling changes and restoring original data
+  // Handle canceling and restoring original data
   const handleCancel = () => {
     setName(originalData.name);
     setEmail(originalData.email);
@@ -152,6 +178,10 @@ export default function ProfilePage() {
     setPhoneError(false);
     setIsEditing(false); // Exit editing mode
   };
+
+  /* ##########################################################
+   ##################   UI RENDERING   ##################
+   ########################################################## */
 
   return (
     <SafeAreaProvider>
@@ -244,7 +274,7 @@ export default function ProfilePage() {
                 </>
               ) : (
                 <Text
-                  style={[styles.value, styles.textValue]} // Add some space between label and value
+                  style={[styles.value, styles.textValue]}
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
@@ -301,12 +331,15 @@ export default function ProfilePage() {
           {/* Buttons Section */}
           {!isEditing && (
             <View style={styles.actionSection}>
-              <TouchableOpacity style={styles.actionButton}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => router.push("/HistoryPage")}
+              >
                 <Text style={styles.actionText}>{i18n.t("historic")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.actionButton}
-                onPress={() => router.push("/SettingsPage")} // Go to Settings Page
+                onPress={() => router.push("/SettingsPage")}
               >
                 <Text style={styles.actionText}>{i18n.t("settings")}</Text>
               </TouchableOpacity>
