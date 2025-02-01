@@ -59,7 +59,11 @@ export default function RootLayout() {
         {/* Page History */}
         <Stack.Screen
           name="HistoryPage"
-          options={{ title: i18n.t("historic"), headerShown: true }}
+          options={{
+            title: i18n.t("historic"),
+            headerShown: true,
+            headerBackTitle: i18n.t("goBack"),
+          }}
         />
         {/* Page Not Found */}
         <Stack.Screen name="+not-found" />

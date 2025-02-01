@@ -148,6 +148,7 @@ I18n.translations = {
     clearAllNotifications: "Clear All Notifications",
     clearAllConfirmation: "Do you really want to delete all notifications?",
     noNotifications: "No notifications available.",
+    goBack: "Back",
 
     // Settings Page
     settingsTitle: "SETTINGS",
@@ -312,6 +313,7 @@ I18n.translations = {
     clearAllConfirmation:
       "Voulez-vous vraiment supprimer toutes les notifications ?",
     noNotifications: "Aucune notification disponible.",
+    goBack: "Retour",
 
     // Settings Page
     settingsTitle: "PARAMÈTRES",
@@ -463,6 +465,7 @@ I18n.translations = {
     clearAllConfirmation:
       "¿Realmente deseas eliminar todas las notificaciones?",
     noNotifications: "No hay notificaciones disponibles.",
+    goBack: "Volver",
 
     // Settings Page
     settingsTitle: "AJUSTES",
@@ -614,6 +617,7 @@ I18n.translations = {
     clearAllConfirmation:
       "Möchten Sie wirklich alle Benachrichtigungen löschen?",
     noNotifications: "Keine Benachrichtigungen verfügbar.",
+    goBack: "Zurück",
 
     // Settings Page
     settingsTitle: "EINSTELLUNGEN",
@@ -764,6 +768,7 @@ I18n.translations = {
     clearAllNotifications: "Elimina tutto",
     clearAllConfirmation: "Vuoi davvero eliminare tutte le notifiche?",
     noNotifications: "Nessuna notifica disponibile.",
+    goBack: "Torna indietro",
 
     // Settings Page
     settingsTitle: "IMPOSTAZIONI",

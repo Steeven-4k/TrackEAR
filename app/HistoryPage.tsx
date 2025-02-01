@@ -68,6 +68,7 @@ export default function HistoryPage() {
   useEffect(() => {
     navigation.setOptions({
       title: i18n.t("historic"),
+      headerBackTitle: i18n.t("goBack"),
     });
   }, [i18n.locale]);
 

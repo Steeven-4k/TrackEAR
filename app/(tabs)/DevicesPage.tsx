@@ -57,8 +57,7 @@ const DevicesPage = () => {
 
   // Send an email alert to the user and its saved contacts
   const sendEmailAlert = async (userEmail: string | null) => {
-    const SENDGRID_API_KEY =
-      "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";
+    const SENDGRID_API_KEY = "YOUR_API_KEY";
     const SENDGRID_URL = "https://api.sendgrid.com/v3/mail/send";
 
     // Retrieve the current language setting
