@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "projectprint.h": "c",
+        "dk_buttons_and_leds.h": "c",
+        "kernel.h": "c",
+        "dm.h": "c",
+        "service.h": "c",
+        "ddfs.h": "c",
+        "cstdio": "cpp",
+        "types.h": "c",
+        "distance_measurement_handling.h": "c"
+    },
+    "nrf-connect.taskBindings": {
+        "pristineBuild": [],
+        "build": []
+    }
+}

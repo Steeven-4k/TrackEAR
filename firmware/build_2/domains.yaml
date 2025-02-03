@@ -1,0 +1,7 @@
+default: nrf_dm
+build_dir: C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_2
+domains:
+  - name: nrf_dm
+    build_dir: C:/ncs/v2.9.0/nrf/samples/bluetooth/nrf_dm/build_2/nrf_dm
+flash_order:
+  - nrf_dm
