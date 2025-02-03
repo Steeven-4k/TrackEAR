@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -45,6 +45,9 @@ export default function GeolocationPage() {
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   });
+
+  // Reference for the map
+  const mapRef = useRef<MapView | null>(null);
 
   // Loading state to show a spinner while fetching data
   const [loading, setLoading] = useState(true);
@@ -160,6 +163,21 @@ export default function GeolocationPage() {
     };
   }, []);
 
+  // Center the map on the user
+  const centerOnUser = () => {
+    if (mapRef.current && currentLocation) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        },
+        1000
+      );
+    }
+  };
+
   /* ##########################################################
    ###########    HEARING AID POSITION MANAGEMENT   #########
    ########################################################## */
@@ -186,12 +204,18 @@ export default function GeolocationPage() {
 
   // Focus the map on a selected hearing aid
   const focusOnHearingAid = (aid: HearingAid) => {
-    setRegion({
-      latitude: aid.latitude,
-      longitude: aid.longitude,
-      latitudeDelta: 0.01,
-      longitudeDelta: 0.01,
-    });
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: aid.latitude,
+          longitude: aid.longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        },
+        1000
+      );
+    }
+    setSelectedHearingAid(aid);
   };
 
   // Display a selection menu for hearing aids
@@ -322,7 +346,7 @@ export default function GeolocationPage() {
           if (angle < 0) {
             angle += 360;
           }
-          angle = (angle + 180) % 360; // Correction de l'inversion
+          angle = (angle + 180) % 360;
           setHeading(angle);
         });
       }
@@ -460,6 +484,7 @@ export default function GeolocationPage() {
 
       {/* Map */}
       <MapView
+        ref={mapRef}
         style={styles.map}
         region={region}
         onPress={() => {
@@ -508,8 +533,8 @@ export default function GeolocationPage() {
                       currentLocation.longitude,
                       device.latitude,
                       device.longitude
-                    )}`
-                  : "Calcul en cours..."
+                    )} km`
+                  : "Estimation..."
               }
               pinColor={aidLost && device.id === 1 ? "green" : "red"}
               onPress={() => {
@@ -518,7 +543,7 @@ export default function GeolocationPage() {
             />
           ))}
 
-        {/* Vvisual cone for orientation */}
+        {/* Visual cone for orientation */}
         {currentLocation && getVisionCone().length > 1 && (
           <Polygon
             coordinates={getVisionCone()}
@@ -564,25 +589,7 @@ export default function GeolocationPage() {
       <View style={styles.buttonContainer}>
         {currentLocation && (
           <>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                setRegion({
-                  latitude: currentLocation.latitude + 0.00001,
-                  longitude: currentLocation.longitude + 0.00001,
-                  latitudeDelta: region.latitudeDelta,
-                  longitudeDelta: region.longitudeDelta,
-                });
-                setTimeout(() => {
-                  setRegion({
-                    latitude: currentLocation.latitude,
-                    longitude: currentLocation.longitude,
-                    latitudeDelta: region.latitudeDelta,
-                    longitudeDelta: region.longitudeDelta,
-                  });
-                }, 100);
-              }}
-            >
+            <TouchableOpacity style={styles.button} onPress={centerOnUser}>
               <Text style={styles.buttonText}>{i18n.t("centerOnMe")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={selectHearingAid}>
